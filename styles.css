@@ -1,18 +1,18 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #f7f5f2;
-  --surface: #ffffff;
-  --accent: #e8491d;
-  --accent-light: #fff0ec;
-  --text: #1a1a1a;
-  --muted: #6b6b6b;
-  --border: #e4e0db;
-  --food: #e8491d;
-  --drinks: #6b47dc;
-  --sights: #1aa06d;
+  --bg: #0f0e0c;
+  --surface: #1a1815;
+  --accent: #c9a96e;
+  --accent-light: #1c1710;
+  --text: #ede8e0;
+  --muted: #7a7268;
+  --border: #252220;
+  --food: #c9a96e;
+  --drinks: #8b7cc8;
+  --sights: #5aa882;
   --radius: 14px;
-  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow: 0 2px 20px rgba(0,0,0,0.4);
 }
 
 body {
@@ -26,8 +26,9 @@ body {
 
 /* ── Header ── */
 header {
-  background: var(--accent);
-  color: #fff;
+  background: #1a1815;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
   padding: 2.5rem 1.5rem 2rem;
   text-align: center;
 }
@@ -40,7 +41,7 @@ header h1 {
 
 .tagline {
   margin-top: 0.35rem;
-  opacity: 0.88;
+  color: var(--muted);
   font-size: 1rem;
 }
 
