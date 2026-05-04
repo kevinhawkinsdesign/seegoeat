@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SeeGoEat — Recommendations</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1>SeeGoEat</h1>
+      <p class="tagline">Places worth your time</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="food">Food</button>
+      <button class="filter-btn" data-filter="drinks">Drinks</button>
+      <button class="filter-btn" data-filter="sights">Sights</button>
+    </section>
+
+    <section class="grid" id="places-grid">
+      <!-- Cards are rendered by places.js -->
+    </section>
+  </main>
+
+  <footer>
+    <p>Curated by <strong>SeeGoEat</strong> &mdash; all recommendations are personal picks</p>
+  </footer>
+
+  <script src="places.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
