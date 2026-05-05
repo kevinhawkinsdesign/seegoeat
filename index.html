@@ -147,7 +147,7 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
   <div class="stats">
     <div class="stat"><span class="sn" id="stTotal">—</span><span class="sl">Places curated</span></div>
     <div class="stat"><span class="sn" id="stCities">—</span><span class="sl">Cities covered</span></div>
-    <div class="stat"><span class="sn" id="stReviewed">—</span><span class="sl">Personally reviewed</span></div>
+    <div class="stat"><span class="sn" id="stReviewed">—</span><span class="sl">My Favorites</span></div>
     <div class="stat"><span class="sn">0</span><span class="sl">Sponsored placements</span></div>
   </div>
   <div class="shd"><div class="shr"></div><span class="shl">Choose a city</span><div class="shr"></div></div>
@@ -358,7 +358,7 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
   <div class="stats">
     <div class="stat"><span class="sn" id="stTotal">—</span><span class="sl">Places curated</span></div>
     <div class="stat"><span class="sn" id="stCities">—</span><span class="sl">Cities covered</span></div>
-    <div class="stat"><span class="sn" id="stReviewed">—</span><span class="sl">Personally reviewed</span></div>
+    <div class="stat"><span class="sn" id="stReviewed">—</span><span class="sl">My Favorites</span></div>
     <div class="stat"><span class="sn">0</span><span class="sl">Sponsored placements</span></div>
   </div>
   <div class="shd"><div class="shr"></div><span class="shl">Choose a city</span><div class="shr"></div></div>
@@ -516,7 +516,7 @@ function buildNav(c){
       <div class="cn">${c}</div>
       <span class="co">${m.country}</span>
       <p class="ct">${m.tagline||''}</p>
-      <span class="cb">${pl.length} place${pl.length!==1?'s':''}${reviewed?' · '+reviewed+' reviewed':''}</span>
+      <span class="cb">${pl.length} place${pl.length!==1?'s':''}${reviewed?' · '+reviewed+' favorites':''}</span>
       <div class="ccta">Explore</div>
     </div>`;
   }).join('');
