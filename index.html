@@ -130,12 +130,35 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
   .mover{padding:10px;}
   .modal{max-height:94vh;}
 }
+.submit-pg{max-width:680px;margin:0 auto;padding:64px 48px 80px;}
+.submit-pg h2{font-family:'Playfair Display',serif;font-size:42px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin-bottom:10px;}
+.submit-pg h2 em{font-style:italic;color:var(--accent);}
+.submit-pg .sub{font-size:15px;color:var(--ink-light);line-height:1.7;margin-bottom:40px;max-width:500px;}
+.sform{display:flex;flex-direction:column;gap:20px;}
+.sfield{display:flex;flex-direction:column;gap:6px;}
+.sfield label{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-muted);}
+.sfield input,.sfield textarea,.sfield select{background:var(--warm);border:1px solid var(--rule);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:300;padding:12px 16px;border-radius:4px;transition:border-color .15s;outline:none;width:100%;}
+.sfield input:focus,.sfield textarea:focus,.sfield select:focus{border-color:var(--accent);}
+.sfield textarea{resize:vertical;min-height:100px;line-height:1.6;}
+.sfield input::placeholder,.sfield textarea::placeholder{color:var(--ink-muted);}
+.srow{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.sbtn{background:var(--accent);color:#0f0e0c;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:14px 32px;border:none;border-radius:4px;cursor:pointer;align-self:flex-start;transition:opacity .15s;}
+.sbtn:hover{opacity:.85;}
+.sbtn:disabled{opacity:.5;cursor:not-allowed;}
+.sthanks{display:none;text-align:center;padding:60px 0;}
+.sthanks .scheck{font-size:48px;margin-bottom:16px;}
+.sthanks h3{font-family:'Playfair Display',serif;font-size:28px;margin-bottom:10px;}
+.sthanks p{color:var(--ink-light);font-size:15px;}
+.snav-btn{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:0 20px;height:100%;display:flex;align-items:center;cursor:pointer;color:#0f0e0c;background:var(--accent);font-weight:700;white-space:nowrap;transition:opacity .15s;margin-left:auto;flex-shrink:0;}
+.snav-btn:hover{opacity:.85;}
+@media(max-width:600px){.srow{grid-template-columns:1fr;}.submit-pg{padding:40px 24px 60px;}}
 </style>
 </head>
 <body>
 <nav class="top-nav" id="topNav">
   <span class="logo" onclick="goHome()">See<em>Go</em>Eat</span>
   <div class="nav-links" id="navLinks"></div>
+  <span class="snav-btn" onclick="goSubmit()">Submit a place</span>
 </nav>
 
 <div class="pg on" id="pg-home">
@@ -194,6 +217,44 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
   <footer><strong>SeeGoEat</strong><span>© 2026 Kevin Hawkins</span><span style="cursor:pointer;text-decoration:underline" onclick="goHome()">← All cities</span></footer>
 </div>
 
+<div class="pg" id="pg-submit">
+  <div class="submit-pg">
+    <h2>Know a place worth<br><em>the detour?</em></h2>
+    <p class="sub">Share a Google Maps list or individual place links and I'll review them for inclusion. I add places I'd personally stand behind — so not everything makes the cut, but everything gets looked at.</p>
+    <form class="sform" id="submitForm" action="https://formspree.io/f/kevin@seegoeat.com" method="POST">
+      <div class="srow">
+        <div class="sfield">
+          <label>Your name</label>
+          <input type="text" name="name" placeholder="Kevin Hawkins" required />
+        </div>
+        <div class="sfield">
+          <label>Your email</label>
+          <input type="email" name="email" placeholder="you@example.com" required />
+        </div>
+      </div>
+      <div class="sfield">
+        <label>City / Location</label>
+        <input type="text" name="city" placeholder="e.g. Barcelona, Spain" required />
+      </div>
+      <div class="sfield">
+        <label>Google Maps list URL or place links</label>
+        <textarea name="maps_links" placeholder="Paste a Google Maps saved list URL, or individual place links — one per line. e.g. https://maps.app.goo.gl/..." required></textarea>
+      </div>
+      <div class="sfield">
+        <label>Why should these make the list? <span style="color:var(--ink-muted);text-transform:none;letter-spacing:0">(optional)</span></label>
+        <textarea name="notes" placeholder="Any context, personal experience, or recommendations..."></textarea>
+      </div>
+      <button type="submit" class="sbtn" id="submitBtn">Send recommendations →</button>
+    </form>
+    <div class="sthanks" id="submitThanks">
+      <div class="scheck">✓</div>
+      <h3>Got it — thanks.</h3>
+      <p>I'll review your suggestions and add the ones that earn a spot.<br>You'll hear from me if they make the cut.</p>
+    </div>
+  </div>
+  <footer><strong>SeeGoEat</strong><span>© 2026 Kevin Hawkins</span><span style="cursor:pointer;text-decoration:underline" onclick="goHome()">← Back to cities</span></footer>
+</div>
+
 <div class="mover" id="mover" onclick="closeMif(event)">
   <div class="modal">
     <div class="mhd">
@@ -219,6 +280,7 @@ let city=null,cat=null;
 function goHome(){
   document.getElementById('pg-home').classList.add('on');
   document.getElementById('pg-city').classList.remove('on');
+  document.getElementById('pg-submit').classList.remove('on');
   buildNav(null);window.scrollTo(0,0);
 }
 
@@ -236,6 +298,7 @@ function goCity(c){
   buildTabs(cats);renderPlaces(cat);
   document.getElementById('pg-home').classList.remove('on');
   document.getElementById('pg-city').classList.add('on');
+  document.getElementById('pg-submit').classList.remove('on');
   buildNav(c);window.scrollTo(0,0);
 }
 
@@ -295,6 +358,12 @@ function closeMif(e){if(e.target===document.getElementById('mover'))closeM();}
 function closeM(){document.getElementById('mover').classList.remove('on');document.body.style.overflow='';}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM();});
 
+function goSubmit(){
+  document.getElementById('pg-home').classList.remove('on');
+  document.getElementById('pg-city').classList.remove('on');
+  document.getElementById('pg-submit').classList.add('on');
+  buildNav(null);window.scrollTo(0,0);
+}
 function buildNav(c){
   const L=document.getElementById('navLinks');
   L.innerHTML=Object.keys(PLACES).map(k=>`<span class="nl${k===c?' on':''}" onclick="goCity('${k.replace(/'/g,"\'")}')"> ${META[k]?.emoji||''} ${k}</span>`).join('');
@@ -320,6 +389,24 @@ function buildNav(c){
   document.getElementById('stReviewed').textContent=reviewed;
   buildNav(null);
 })();
+document.getElementById('submitForm').addEventListener('submit',async function(e){
+  e.preventDefault();
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true;btn.textContent='Sending...';
+  try{
+    const res=await fetch(this.action,{method:'POST',body:new FormData(this),headers:{Accept:'application/json'}});
+    if(res.ok){
+      this.style.display='none';
+      document.getElementById('submitThanks').style.display='block';
+    } else {
+      btn.disabled=false;btn.textContent='Send recommendations →';
+      alert('Something went wrong — please email kevin@seegoeat.com directly.');
+    }
+  } catch(err){
+    btn.disabled=false;btn.textContent='Send recommendations →';
+    alert('Something went wrong — please email kevin@seegoeat.com directly.');
+  }
+});
 </script>
 </body>
 </html>
