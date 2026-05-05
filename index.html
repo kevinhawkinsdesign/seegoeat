@@ -12,8 +12,8 @@
 html{scroll-behavior:smooth;}
 body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.7;min-height:100vh;}
 .top-nav{border-bottom:2px solid var(--ink);background:var(--paper);position:sticky;top:0;z-index:100;display:flex;align-items:stretch;min-height:52px;}
-.logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;padding:12px 28px;border-right:1px solid var(--ink);color:var(--ink);cursor:pointer;white-space:nowrap;letter-spacing:-0.02em;display:flex;align-items:center;}
-.logo em{font-style:italic;color:var(--accent);}
+.logo{padding:8px 20px;border-right:1px solid var(--rule);cursor:pointer;display:flex;align-items:center;}
+.logo img{height:32px;width:auto;display:block;}
 .nav-links{display:flex;align-items:center;overflow-x:auto;flex:1;scrollbar-width:none;}
 .nav-links::-webkit-scrollbar{display:none;}
 .nl{font-size:11px;letter-spacing:0.11em;text-transform:uppercase;padding:0 15px;height:100%;display:flex;align-items:center;border-right:1px solid var(--rule);cursor:pointer;color:var(--ink-muted);white-space:nowrap;transition:color .15s,background .15s;}
@@ -156,7 +156,7 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
 </head>
 <body>
 <nav class="top-nav" id="topNav">
-  <span class="logo" onclick="goHome()">See<em>Go</em>Eat</span>
+  <span class="logo" onclick="goHome()"><img src="logo.png" alt="SeeGoEat"></span>
   <div class="nav-links" id="navLinks"></div>
   <span class="snav-btn" onclick="goSubmit()">Submit a place</span>
 </nav>
