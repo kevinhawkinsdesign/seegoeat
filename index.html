@@ -222,9 +222,8 @@ function goCity(c){
   city=c;
   const m=META[c]||{country:c,emoji:'📍',tagline:''},pl=PLACES[c]||[];
   const cats=[...new Set(pl.map(p=>p.c))];
-  // Sort: Reviewed by Kevin first, then alphabetically
-  cats.sort((a,b)=>a==='Reviewed by Kevin'?-1:b==='Reviewed by Kevin'?1:a.localeCompare(b));
-  cat=cats[0];
+  cats.sort((a,b)=>a.localeCompare(b));
+  cat='All';
   document.getElementById('cEmoji').textContent=m.emoji;
   document.getElementById('cName').textContent=c;
   document.getElementById('cCountry').textContent=m.country;
@@ -238,13 +237,13 @@ function goCity(c){
 }
 
 function buildTabs(cats){
-  document.getElementById('tabs').innerHTML=cats.map(k=>{
+  const allN=(PLACES[city]||[]).length;
+  const allTab=`<div class="tab${'All'===cat?' on':''}" onclick="selCat('All')">All <span style="color:var(--ink-muted);margin-left:2px">${allN}</span></div>`;
+  document.getElementById('tabs').innerHTML=allTab+cats.map(k=>{
     const n=(PLACES[city]||[]).filter(p=>p.c===k).length;
-    const badge=k==='Reviewed by Kevin'?'<span class="rbadge">★ Kevin\'s picks</span>':'';
-    return `<div class="tab${k===cat?' on':''}" onclick="selCat('${k.replace(/'/g,"\\'")}')"> ${k}${badge} <span style="color:var(--ink-muted);margin-left:2px">${n}</span></div>`;
+    return `<div class="tab${k===cat?' on':''}" onclick="selCat('${k.replace(/'/g,"\'")}')"> ${k} <span style="color:var(--ink-muted);margin-left:2px">${n}</span></div>`;
   }).join('');
 }
-
 function selCat(k){
   cat=k;
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.cat===k));
@@ -257,7 +256,7 @@ function selCat(k){
 }
 
 function renderPlaces(k){
-  const places=(PLACES[city]||[]).filter(p=>p.c===k);
+  const places=k==='All'?(PLACES[city]||[]):(PLACES[city]||[]).filter(p=>p.c===k);
   document.getElementById('catTitle').textContent=k;
   document.getElementById('catCount').textContent=places.length+' place'+(places.length!==1?'s':'');
   document.getElementById('plGrid').innerHTML=places.map(p=>{
@@ -277,7 +276,7 @@ function openM(p,c){
   document.getElementById('mCity').textContent=c+' · '+(META[c]?.country||'');
   document.getElementById('mStars').textContent=p.r?'★'.repeat(p.r)+'☆'.repeat(5-p.r):'';
   const rev=document.getElementById('mRev'),desc=document.getElementById('mDesc');
-  if(p.d&&p.c==='Reviewed by Kevin'){
+  if(p.d&&p.c==='My Favorites'){
     rev.textContent='"'+p.d+'"';rev.style.display='block';desc.textContent='';
   } else {
     rev.style.display='none';desc.textContent=p.d||'Click below to open in Google Maps for details.';
@@ -292,21 +291,13 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM();});
 
 function buildNav(c){
   const L=document.getElementById('navLinks');
-  if(!c){
-    L.innerHTML=Object.keys(PLACES).map(k=>`<span class="nl" onclick="goCity('${k.replace(/'/g,"\\'")}')"> ${META[k]?.emoji||''} ${k}</span>`).join('');
-  } else {
-    const cats=[...new Set((PLACES[c]||[]).map(p=>p.c))];
-    cats.sort((a,b)=>a==='Reviewed by Kevin'?-1:b==='Reviewed by Kevin'?1:a.localeCompare(b));
-    L.innerHTML=`<span class="nb" onclick="goHome()">← Cities</span>`+
-      cats.map(k=>`<span class="nl${k===cat?' on':''}" onclick="selCat('${k.replace(/'/g,"\\'")}')"> ${k}</span>`).join('');
-  }
+  L.innerHTML=Object.keys(PLACES).map(k=>`<span class="nl${k===c?' on':''}" onclick="goCity('${k.replace(/'/g,"\'")}')"> ${META[k]?.emoji||''} ${k}</span>`).join('');
 }
-
 (function init(){
   const g=document.getElementById('cityGrid');
   g.innerHTML=Object.entries(PLACES).map(([c,pl])=>{
     const m=META[c]||{country:c,emoji:'📍',tagline:''};
-    const reviewed=pl.filter(p=>p.c==='Reviewed by Kevin').length;
+    const reviewed=pl.filter(p=>p.c==='My Favorites').length;
     return `<div class="cc" onclick="goCity('${c.replace(/'/g,"\\'")}')">
       <span class="ce">${m.emoji}</span>
       <div class="cn">${c}</div>
@@ -317,7 +308,7 @@ function buildNav(c){
     </div>`;
   }).join('');
   const total=Object.values(PLACES).reduce((s,v)=>s+v.length,0);
-  const reviewed=Object.values(PLACES).reduce((s,v)=>s+v.filter(p=>p.c==='Reviewed by Kevin').length,0);
+  const reviewed=Object.values(PLACES).reduce((s,v)=>s+v.filter(p=>p.c==='My Favorites').length,0);
   document.getElementById('stTotal').textContent=total;
   document.getElementById('stCities').textContent=Object.keys(PLACES).length;
   document.getElementById('stReviewed').textContent=reviewed;
