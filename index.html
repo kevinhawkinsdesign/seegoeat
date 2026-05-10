@@ -111,8 +111,7 @@ footer{border-top:2px solid var(--ink);padding:20px 48px;display:flex;align-item
 footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;text-transform:none;letter-spacing:-0.01em;color:var(--ink);}
 .city-select-wrap{display:none;}
 .city-select-wrap select{background:var(--warm);border:1px solid var(--rule);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 12px;border-radius:4px;width:100%;outline:none;cursor:pointer;}
-.city-search{background:var(--warm);border:1px solid var(--rule);border-top:none;color:var(--ink);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 12px;width:100%;outline:none;}
-.city-search::placeholder{color:var(--ink-muted);}
+
 @media(max-width:960px){
   .nav-links{display:none;}
   .city-select-wrap{display:block;padding:8px 12px;flex:1;}
@@ -173,6 +172,29 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
 .snav-btn{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:0 20px;height:100%;display:flex;align-items:center;cursor:pointer;color:#0f0e0c;background:var(--accent);font-weight:700;white-space:nowrap;transition:opacity .15s;margin-left:auto;flex-shrink:0;}
 .snav-btn:hover{opacity:.85;}
 @media(max-width:600px){.srow{grid-template-columns:1fr;}.submit-pg{padding:40px 24px 60px;}}
+
+.ai-search-wrap{padding:0 48px 32px;max-width:900px;margin:0 auto;}
+.ai-search-row{display:flex;gap:12px;align-items:stretch;}
+.ai-search-input{flex:1;background:var(--warm);border:1px solid var(--rule);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:14px;padding:14px 18px;border-radius:4px;outline:none;transition:border-color .15s;}
+.ai-search-input:focus{border-color:var(--orange);}
+.ai-search-input::placeholder{color:var(--ink-muted);}
+.ai-search-btn{background:var(--orange);color:#0f0e0c;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:14px 24px;border:none;border-radius:4px;cursor:pointer;white-space:nowrap;transition:opacity .15s;}
+.ai-search-btn:hover{opacity:.85;}
+.ai-search-btn:disabled{opacity:.5;cursor:default;}
+.ai-search-results{margin-top:16px;}
+.ai-result-header{font-size:13px;color:var(--ink-muted);margin-bottom:12px;}
+.ai-results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.ai-result-card{background:var(--warm);border:1px solid var(--rule);border-radius:4px;padding:14px 16px;cursor:pointer;transition:border-color .15s;}
+.ai-result-card:hover{border-color:var(--orange);}
+.ai-result-name{font-weight:700;font-size:14px;margin-bottom:2px;}
+.ai-result-meta{font-size:12px;color:var(--ink-muted);}
+.ai-key-notice{background:rgba(255,140,0,.08);border:1px solid rgba(255,140,0,.3);border-radius:4px;padding:12px 16px;font-size:13px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.ai-key-input{flex:1;min-width:260px;background:var(--warm);border:1px solid var(--rule);color:var(--ink);font-family:monospace;font-size:12px;padding:8px 12px;border-radius:4px;outline:none;}
+.ai-key-save{background:var(--orange);color:#0f0e0c;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;padding:8px 16px;border:none;border-radius:4px;cursor:pointer;}
+.ai-region-header{grid-column:1/-1;padding:32px 0 8px;}
+.ai-region-title{font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-muted);border-top:1px solid var(--rule);padding-top:24px;margin:0;}
+@media(max-width:900px){.ai-search-wrap{padding:0 24px 24px;}.ai-results-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){.ai-search-row{flex-direction:column;}.ai-results-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -180,8 +202,9 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
   <span class="logo" onclick="goHome()"><img src="logo.png" alt="SeeGoEat"></span>
   <div class="nav-links" id="navLinks"></div>
   <div class="city-select-wrap">
-    <input class="city-search" id="citySearch" placeholder="Search cities…" oninput="filterCitySelect(this.value)" onfocus="this.select()">
-    <select id="citySelect" size="1" onchange="if(this.value)goCity(this.value)" style="display:none"></select>
+    <select id="citySelect" size="1" onchange="if(this.value)goCity(this.value)">
+      <option value="">Choose a city...</option>
+    </select>
   </div>
 </nav>
 
@@ -202,6 +225,15 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
     <div class="stat"><span class="sn">0</span><span class="sl">Sponsored placements</span></div>
   </div>
   <div class="shd"><div class="shr"></div><span class="shl">Choose a city</span><div class="shr"></div></div>
+
+  <div class="ai-search-wrap">
+    <div class="ai-search-row">
+      <input class="ai-search-input" id="aiSearchInput" placeholder="Search places… e.g. &quot;best pasta in Italy&quot; or &quot;rooftop bar&quot;" oninput="localSearch(this.value)" onkeydown="if(event.key==='Enter'){aiSearch();}" autocomplete="off">
+      <button class="ai-search-btn" onclick="aiSearch()">✦ Ask AI</button>
+    </div>
+    <div class="ai-search-results" id="aiSearchResults"></div>
+  </div>
+
   <div class="cgrid" id="cityGrid"></div>
   <div class="about">
     <div>
@@ -395,7 +427,8 @@ function openM(p,c){
   document.getElementById('mCat').textContent=p.c;
   document.getElementById('mName').textContent=p.n;
   document.getElementById('mCity').textContent=c+' · '+(META[c]?.country||'');
-  const rnd=p.r?Math.round(p.r):0;document.getElementById('mStars').textContent=rnd?'★'.repeat(rnd)+'☆'.repeat(Math.max(0,5-rnd)):'';
+  function starsFor(r){if(!r)return'';const full=Math.floor(r),half=(r-full)>=0.5,empty=Math.max(0,5-full-(half?1:0));return'★'.repeat(full)+(half?'½':'')+'☆'.repeat(empty)+' '+r;}
+  document.getElementById('mStars').textContent=p.r?starsFor(p.r):'';
   const rev=document.getElementById('mRev'),desc=document.getElementById('mDesc');
   if(p.d&&p.f===true){
     rev.textContent='"'+p.d+'"';rev.style.display='block';desc.textContent='';
@@ -423,31 +456,32 @@ function buildNav(c){
 }
 function buildCitySelect(active,filter){
   const sel=document.getElementById('citySelect');
-  const src=document.getElementById('citySearch');
-  if(!sel||!src) return;
+  if(!sel) return;
   const cities=Object.keys(PLACES).filter(k=>!filter||k.toLowerCase().includes(filter.toLowerCase()));
-  sel.innerHTML='<option value="">'+( active||'Choose a city')+'</option>'+cities.map(k=>`<option value="${k}"${k===active?' selected':''}>${META[k]?.emoji||''} ${k}</option>`).join('');
-  sel.style.display=cities.length||filter?'block':'none';
-  if(src&&!src.value&&active) src.value='';
-}
-function filterCitySelect(val){
-  buildCitySelect(null,val);
-  document.getElementById('citySelect').style.display='block';
+  sel.innerHTML='<option value="">'+(active||'Choose a city...')+'</option>'+cities.map(k=>`<option value="${k}"${k===active?' selected':''}>${META[k]?.emoji||''} ${k}</option>`).join('');
 }
 (function init(){
   const g=document.getElementById('cityGrid');
-  g.innerHTML=Object.entries(PLACES).map(([c,pl])=>{
-    const m=META[c]||{country:c,emoji:'📍',tagline:''};
-    const reviewed=pl.filter(p=>p.f===true).length;
-    return `<div class="cc" onclick="goCity('${c.replace(/'/g,"\\'")}')">
-      <span class="ce">${m.emoji}</span>
-      <div class="cn">${c}</div>
-      <span class="co">${m.country}</span>
-      <p class="ct">${m.tagline||''}</p>
-      <span class="cb">${pl.length} place${pl.length!==1?'s':''}${reviewed?' · '+reviewed+' favorites':''}</span>
-      <div class="ccta">Explore</div>
-    </div>`;
-  }).join('');
+  let gridHTML='';
+  for(const [region,cities] of Object.entries(REGIONS)){
+    const inRegion=cities.filter(c=>PLACES[c]);
+    if(!inRegion.length) continue;
+    gridHTML+=`<div class="ai-region-header"><h3 class="ai-region-title">${region}</h3></div>`;
+    gridHTML+=inRegion.map(c=>{
+      const pl=PLACES[c]||[];
+      const m=META[c]||{country:c,emoji:'📍',tagline:''};
+      const reviewed=pl.filter(p=>p.f===true).length;
+      return `<div class="cc" onclick="goCity('${c.replace(/'/g,"\\'")}')">
+        <span class="ce">${m.emoji}</span>
+        <div class="cn">${c}</div>
+        <span class="co">${m.country}</span>
+        <p class="ct">${m.tagline||''}</p>
+        <span class="cb">${pl.length} place${pl.length!==1?'s':''}${reviewed?' · '+reviewed+' favorites':''}</span>
+        <div class="ccta">Explore</div>
+      </div>`;
+    }).join('');
+  }
+  g.innerHTML=gridHTML;
   const total=Object.values(PLACES).reduce((s,v)=>s+v.length,0);
   const reviewed=Object.values(PLACES).reduce((s,v)=>s+v.filter(p=>p.f===true).length,0);
   document.getElementById('stTotal').textContent=total;
@@ -480,6 +514,110 @@ document.getElementById('submitForm').addEventListener('submit',async function(e
     alert('Something went wrong — please email kevin@seegoeat.com directly.');
   }
 });
+
+const REGIONS = {
+  'Europe': ['Amsterdam','Athens','Barcelona','Berlin','Bordeaux','Cascais','Cologne','Comporta','Copenhagen','Corfu','Crete','Dublin','Edinburgh','Freiburg','Gran Canaria','Hamburg','Ibiza','Istanbul','Lisbon','London','Madrid','Mallorca','Marmaris','Antalya','Dalyan','Meteora','Munich','Palermo','Paris','Peloponnese','Rhodes','Tbilisi','Torremolinos','Valencia','Venice','Warsaw','Zakynthos'],
+  'North America': ['Arlington','Baltimore','Chincoteague','Grand Canyon','Kansas City','Los Angeles','Miami','New York City','Pensacola','San Francisco','San Jose','Silver Spring','Toronto','Washington DC'],
+  'Latin America': ['Mexico City','Oaxaca','Tamarindo'],
+  'Asia': ['Kobe','Kyoto','Osaka','Seoul','Tokyo'],
+  'Oceania': ['Broome','Melbourne','Perth','Sydney'],
+  'Africa & Islands': ['Cape Town','Maldives','Seychelles']
+};
+
+function localSearch(val){
+  const q=(val||'').toLowerCase().trim();
+  const out=document.getElementById('aiSearchResults');
+  if(!q){out.innerHTML='';return;}
+  const results=[];
+  for(const [city,places] of Object.entries(PLACES)){
+    for(const p of places){
+      let score=0;
+      const name=(p.n||'').toLowerCase();
+      const desc=(p.d||'').toLowerCase();
+      const cat=(p.c||'').toLowerCase();
+      const ct=city.toLowerCase();
+      if(name.includes(q)) score+=10;
+      if(ct.includes(q)) score+=8;
+      if(cat.includes(q)) score+=6;
+      if(desc.includes(q)) score+=3;
+      // keyword matching
+      const words=q.split(/\s+/);
+      for(const w of words){
+        if(w.length<3) continue;
+        if(name.includes(w)) score+=3;
+        if(desc.includes(w)) score+=1;
+        if(cat.includes(w)) score+=2;
+        if(ct.includes(w)) score+=2;
+      }
+      if(score>0) results.push({p,city,score});
+    }
+  }
+  results.sort((a,b)=>b.score-a.score);
+  showSearchResults(results.slice(0,12), `${results.length} places found for "${val}"`);
+}
+
+function showSearchResults(results, headerText){
+  const out=document.getElementById('aiSearchResults');
+  if(!results.length){out.innerHTML='<p class="ai-result-header">No matches found.</p>';return;}
+  out.innerHTML=`<div class="ai-result-header">${headerText}</div><div class="ai-results-grid">`+
+    results.map(({p,city})=>`<div class="ai-result-card" onclick='openM(${JSON.stringify(p).replace(/'/g,"&#39;")},"${city.replace(/"/g,'&quot;')}")'>
+      <div class="ai-result-name">${p.n}</div>
+      <div class="ai-result-meta">${p.c} · ${city}${p.r?' · '+p.r+'★':''}</div>
+    </div>`).join('')+
+    '</div>';
+}
+
+async function aiSearch(){
+  const q=(document.getElementById('aiSearchInput').value||'').trim();
+  if(!q) return;
+  let key=localStorage.getItem('sge_ak');
+  const out=document.getElementById('aiSearchResults');
+  if(!key){
+    out.innerHTML=`<div class="ai-key-notice">
+      <span>To use AI search, enter your Anthropic API key (stored only in your browser):</span>
+      <input class="ai-key-input" id="akInput" placeholder="sk-ant-..." type="password">
+      <button class="ai-key-save" onclick="const k=document.getElementById('akInput').value.trim();if(k){localStorage.setItem('sge_ak',k);aiSearch();}">Save & Search</button>
+    </div>`;
+    return;
+  }
+  const btn=document.querySelector('.ai-search-btn');
+  btn.disabled=true;btn.textContent='Thinking...';
+  out.innerHTML='<div class="ai-result-header">AI is searching your places...</div>';
+  try{
+    const idx=[];
+    for(const [city,places] of Object.entries(PLACES)){
+      for(const p of places) idx.push(`${p.n}|||${city}|||${p.c}|||${(p.d||'').slice(0,60)}`);
+    }
+    const prompt=`You are a travel recommendation assistant. Given this query: "${q}"
+
+Search through these places and return the top 12 most relevant ones. Reply ONLY with a JSON array of objects with keys "n" (name) and "city" (city name), nothing else.
+
+Places (format: name|||city|||category|||description_snippet):
+${idx.join('\n')}`;
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'x-api-key':key,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1024,messages:[{role:'user',content:prompt}]})
+    });
+    if(!res.ok){
+      const err=await res.json();
+      if(res.status===401){localStorage.removeItem('sge_ak');}
+      throw new Error(err.error?.message||res.statusText);
+    }
+    const data=await res.json();
+    const text=data.content[0].text.trim();
+    const matches=JSON.parse(text.match(/\[.*\]/s)[0]);
+    const results=matches.map(({n,city})=>{
+      const place=(PLACES[city]||[]).find(p=>p.n===n);
+      return place?{p:place,city}:null;
+    }).filter(Boolean);
+    showSearchResults(results, `AI found ${results.length} places for "${q}"`);
+  }catch(e){
+    out.innerHTML=`<div class="ai-result-header" style="color:red">Error: ${e.message}. <span style="cursor:pointer;text-decoration:underline" onclick="localStorage.removeItem('sge_ak');aiSearch()">Try a different API key</span></div>`;
+  }
+  btn.disabled=false;btn.textContent='✦ Ask AI';
+}
+
 </script>
 </body>
 </html>
