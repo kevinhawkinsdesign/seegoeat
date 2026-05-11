@@ -37,10 +37,6 @@ body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;f
 .shl{font-family:'Playfair Display',serif;font-size:13px;letter-spacing:0.2em;text-transform:uppercase;text-align:center;white-space:nowrap;font-weight:400;}
 .cgrid{display:block;border-top:1px solid var(--rule);padding:0 48px 64px;}
 .cc{padding:28px 24px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);cursor:pointer;position:relative;overflow:hidden;transition:background .18s;}
-.ai-region-body .cc:nth-child(4n){border-right:none;}
-.ai-region-body .cc:nth-child(2n){border-right:1px solid var(--rule);}
-@media(max-width:768px){.ai-region-body .cc:nth-child(4n){border-right:1px solid var(--rule);}.ai-region-body .cc:nth-child(2n){border-right:none;}}
-@media(max-width:480px){.ai-region-body .cc{border-right:none!important;}}
 .cc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(to right,var(--blue),var(--green),var(--orange));transform:scaleX(0);transform-origin:left;transition:transform .22s;}
 .cc:hover{background:var(--accent-bg);}
 .cc:hover::after{transform:scaleX(1);}
@@ -192,16 +188,25 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
 .ai-key-notice{background:rgba(255,140,0,.08);border:1px solid rgba(255,140,0,.3);border-radius:4px;padding:12px 16px;font-size:13px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
 .ai-key-input{flex:1;min-width:260px;background:var(--warm);border:1px solid var(--rule);color:var(--ink);font-family:monospace;font-size:12px;padding:8px 12px;border-radius:4px;outline:none;}
 .ai-key-save{background:var(--orange);color:#0f0e0c;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;padding:8px 16px;border:none;border-radius:4px;cursor:pointer;}
-.ai-region-header{grid-column:1/-1;padding:32px 0 0;}
-.ai-region-title{font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-muted);border-top:1px solid var(--rule);padding:24px 0 0;margin:0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;}
+.expand-all-bar{padding:18px 48px 0;display:flex;justify-content:flex-end;}
+.expand-all-btn{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-muted);background:none;border:1px solid var(--rule);padding:7px 14px;cursor:pointer;transition:color .15s,border-color .15s;}
+.expand-all-btn:hover{color:var(--ink);border-color:var(--ink-muted);}
+.ai-region-header{padding:28px 0 0;}
+.ai-region-title{font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-muted);border-top:1px solid var(--rule);padding:22px 0 0;margin:0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;}
 .ai-region-title:hover{color:var(--ink);}
-.ai-region-meta{font-size:11px;font-weight:400;letter-spacing:0.05em;color:var(--ink-muted);display:flex;align-items:center;gap:16px;}
-.ai-region-toggle{width:18px;height:18px;display:flex;align-items:center;justify-content:center;transition:transform .2s;}
-.ai-region-toggle svg{display:block;}
-.ai-region-body{display:grid;grid-column:1/-1;grid-template-columns:repeat(4,1fr);border-top:none;overflow:hidden;max-height:0;transition:max-height .35s ease;}
-.ai-region-body.open{max-height:20000px;}
-@media(max-width:768px){.ai-region-body{grid-template-columns:1fr 1fr;}}
-@media(max-width:480px){.ai-region-body{grid-template-columns:1fr;}}
+.ai-section-meta{font-size:11px;font-weight:400;letter-spacing:0.05em;color:var(--ink-muted);display:flex;align-items:center;gap:14px;}
+.ai-section-arrow{width:16px;height:16px;display:flex;align-items:center;justify-content:center;transition:transform .2s;}
+.ai-section-arrow svg{display:block;}
+.ai-region-body{display:block;overflow:hidden;max-height:0;transition:max-height .4s ease;}
+.ai-region-body.open{max-height:200000px;}
+.ai-country-header{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-top:1px solid var(--rule);margin-top:16px;cursor:pointer;user-select:none;}
+.ai-country-header:hover .ai-country-name{color:var(--ink);}
+.ai-country-name{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-light);display:flex;align-items:center;gap:8px;}
+.ai-country-body{display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden;max-height:0;transition:max-height .35s ease;}
+.ai-country-body.open{max-height:100000px;}
+.ai-country-body .cc:nth-child(4n){border-right:none;}
+@media(max-width:768px){.expand-all-bar{padding:14px 24px 0;}.ai-country-body{grid-template-columns:1fr 1fr;}.ai-country-body .cc:nth-child(4n){border-right:1px solid var(--rule);}.ai-country-body .cc:nth-child(2n){border-right:none;}}
+@media(max-width:480px){.expand-all-bar{padding:10px 16px 0;}.ai-country-body{grid-template-columns:1fr;}.ai-country-body .cc{border-right:none!important;}}
 @media(max-width:900px){.ai-search-wrap{padding:0 24px 24px;}.ai-results-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:600px){.ai-search-row{flex-direction:column;}.ai-results-grid{grid-template-columns:1fr;}}
 </style>
@@ -243,6 +248,7 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
     <div class="ai-search-results" id="aiSearchResults"></div>
   </div>
 
+  <div class="expand-all-bar"><button class="expand-all-btn" id="expandAllBtn" onclick="expandCollapseAll()">Expand all</button></div>
   <div class="cgrid" id="cityGrid"></div>
   <div class="about">
     <div>
@@ -478,12 +484,22 @@ const REGIONS = {
   'Oceania': ['Broome', 'Melbourne', 'Perth', 'Sydney'],
   'Middle East': ['Doha', 'Muscat']
 };
-function toggleRegion(rid){
-  const body=document.getElementById(rid);
-  const arrow=document.getElementById(rid+'-arrow');
+const CHEVRON=`<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+function toggleSection(id){
+  const body=document.getElementById(id);
+  const arrow=document.getElementById(id+'-arrow');
   if(!body) return;
   const isOpen=body.classList.toggle('open');
-  if(arrow) arrow.style.transform=isOpen?'rotate(180deg)':'rotate(0deg)';
+  if(arrow) arrow.style.transform=isOpen?'rotate(180deg)':'';
+}
+function expandCollapseAll(){
+  const bodies=document.querySelectorAll('.ai-region-body,.ai-country-body');
+  const arrows=document.querySelectorAll('.ai-section-arrow');
+  const anyOpen=[...bodies].some(b=>b.classList.contains('open'));
+  const btn=document.getElementById('expandAllBtn');
+  bodies.forEach(b=>anyOpen?b.classList.remove('open'):b.classList.add('open'));
+  arrows.forEach(a=>a.style.transform=anyOpen?'':'rotate(180deg)');
+  if(btn) btn.textContent=anyOpen?'Expand all':'Collapse all';
 }
 (function init(){
   const g=document.getElementById('cityGrid');
@@ -494,31 +510,49 @@ function toggleRegion(rid){
     const regionTotal=inRegion.reduce((s,c)=>s+(PLACES[c]||[]).length,0);
     const regionFaves=inRegion.reduce((s,c)=>s+(PLACES[c]||[]).filter(p=>p.f===true).length,0);
     const rid='region-'+region.replace(/[^a-z0-9]/gi,'-');
+    // Group cities by country, sorted alphabetically
+    const byCountry={};
+    for(const c of inRegion){const ctry=(META[c]||{}).country||'Other';(byCountry[ctry]=byCountry[ctry]||[]).push(c);}
+    const sortedCountries=Object.keys(byCountry).sort();
     gridHTML+=`<div class="ai-region-header">
-      <h3 class="ai-region-title" onclick="toggleRegion('${rid}')">
+      <h3 class="ai-region-title" onclick="toggleSection('${rid}')">
         <span>${region}</span>
-        <span class="ai-region-meta">
+        <span class="ai-section-meta">
           <span>${inRegion.length} cities · ${regionTotal} places · ${regionFaves} faves</span>
-          <span class="ai-region-toggle" id="${rid}-arrow">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
+          <span class="ai-section-arrow" id="${rid}-arrow">${CHEVRON}</span>
         </span>
       </h3>
-    </div>`;
-    gridHTML+=`<div class="ai-region-body" id="${rid}">`;
-    gridHTML+=inRegion.map(c=>{
-      const pl=PLACES[c]||[];
-      const m=META[c]||{country:c,emoji:'📍',tagline:''};
-      const reviewed=pl.filter(p=>p.f===true).length;
-      return `<div class="cc" onclick="goCity('${c.replace(/'/g,"\\'")}')">
-        <span class="ce">${m.emoji}</span>
-        <div class="cn">${c}</div>
-        <span class="co">${m.country}</span>
-        <p class="ct">${m.tagline||''}</p>
-        <span class="cb">${pl.length} place${pl.length!==1?'s':''}${reviewed?' · '+reviewed+' favorites':''}</span>
-        <div class="ccta">Explore</div>
-      </div>`;
-    }).join('');
+    </div>
+    <div class="ai-region-body" id="${rid}">`;
+    for(const country of sortedCountries){
+      const ctyCities=byCountry[country];
+      const ctryTotal=ctyCities.reduce((s,c)=>s+(PLACES[c]||[]).length,0);
+      const ctryFaves=ctyCities.reduce((s,c)=>s+(PLACES[c]||[]).filter(p=>p.f===true).length,0);
+      const flagEmoji=(META[ctyCities[0]]||{}).emoji||'';
+      const cid='country-'+country.replace(/[^a-z0-9]/gi,'-');
+      gridHTML+=`<div class="ai-country-header" onclick="toggleSection('${cid}')">
+        <span class="ai-country-name"><span>${flagEmoji}</span><span>${country}</span></span>
+        <span class="ai-section-meta">
+          <span>${ctyCities.length} ${ctyCities.length===1?'city':'cities'} · ${ctryTotal} places · ${ctryFaves} faves</span>
+          <span class="ai-section-arrow" id="${cid}-arrow">${CHEVRON}</span>
+        </span>
+      </div>
+      <div class="ai-country-body" id="${cid}">`;
+      gridHTML+=ctyCities.map(c=>{
+        const pl=PLACES[c]||[];
+        const m=META[c]||{country:c,emoji:'📍',tagline:''};
+        const reviewed=pl.filter(p=>p.f===true).length;
+        return `<div class="cc" onclick="goCity('${c.replace(/'/g,"\\'")}')">
+          <span class="ce">${m.emoji}</span>
+          <div class="cn">${c}</div>
+          <span class="co">${m.country}</span>
+          <p class="ct">${m.tagline||''}</p>
+          <span class="cb">${pl.length} place${pl.length!==1?'s':''}${reviewed?' · '+reviewed+' favorites':''}</span>
+          <div class="ccta">Explore</div>
+        </div>`;
+      }).join('');
+      gridHTML+=`</div>`;
+    }
     gridHTML+=`</div>`;
   }
   g.innerHTML=gridHTML;
