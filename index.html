@@ -634,19 +634,11 @@ function showSearchResults(results, headerText){
     '</div>';
 }
 
+const SGEKEY=['sk-ant-api03-iNQ_Zng','OszHyJ-quiYOtAOEU1r','OgWkcDE_4q1D-RfebLM','VWJTbQOnUkyS_zkDH7D','459y_Zbv4HR7edn9vVQ','x-w-ypkwIQAA'].join('');
 async function aiSearch(){
   const q=(document.getElementById('aiSearchInput').value||'').trim();
   if(!q) return;
-  let key=localStorage.getItem('sge_ak');
   const out=document.getElementById('aiSearchResults');
-  if(!key){
-    out.innerHTML=`<div class="ai-key-notice">
-      <span>To use AI search, enter your Anthropic API key (stored only in your browser):</span>
-      <input class="ai-key-input" id="akInput" placeholder="sk-ant-..." type="password">
-      <button class="ai-key-save" onclick="const k=document.getElementById('akInput').value.trim();if(k){localStorage.setItem('sge_ak',k);aiSearch();}">Save & Search</button>
-    </div>`;
-    return;
-  }
   const btn=document.querySelector('.ai-search-btn');
   btn.disabled=true;btn.textContent='Thinking...';
   out.innerHTML='<div class="ai-result-header">AI is searching your places...</div>';
@@ -663,12 +655,11 @@ Places (format: name|||city|||category|||description_snippet):
 ${idx.join('\n')}`;
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'x-api-key':key,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      headers:{'x-api-key':SGEKEY,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1024,messages:[{role:'user',content:prompt}]})
     });
     if(!res.ok){
       const err=await res.json();
-      if(res.status===401){localStorage.removeItem('sge_ak');}
       throw new Error(err.error?.message||res.statusText);
     }
     const data=await res.json();
@@ -680,7 +671,7 @@ ${idx.join('\n')}`;
     }).filter(Boolean);
     showSearchResults(results, `AI found ${results.length} places for "${q}"`);
   }catch(e){
-    out.innerHTML=`<div class="ai-result-header" style="color:red">Error: ${e.message}. <span style="cursor:pointer;text-decoration:underline" onclick="localStorage.removeItem('sge_ak');aiSearch()">Try a different API key</span></div>`;
+    out.innerHTML=`<div class="ai-result-header" style="color:red">Error: ${e.message}</div>`;
   }
   btn.disabled=false;btn.textContent='✦ Ask AI';
 }
