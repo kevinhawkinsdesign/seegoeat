@@ -215,7 +215,7 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
     <div class="mast-content">
       <p class="kicker">Places worth the detour.</p>
       <h1>See. Go. <em>Eat.</em></h1>
-      <p class="mast-sub">Hi, I'm Kevin. I've been to 74 countries over 3 decades — 130+ cities, 40 times around the Earth. Booking.com and Kayak both place me in the top 1% of travellers worldwide. These aren't algorithms or sponsored posts. When I save something, it earned it.</p>
+      <p class="mast-sub">Hi, I'm Kevin. I've been to 74 countries over 3 decades — <span id="stCitiesHero">—</span> cities covered, 40 times around the Earth. Booking.com and Kayak both place me in the top 1% of travellers worldwide. These aren't algorithms or sponsored posts. When I save something, it earned it.</p>
     </div>
   </div>
   <div class="stats">
@@ -247,7 +247,7 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
       <a href="https://www.linkedin.com/in/kevinhawkinsdesign/" class="al" target="_blank" rel="noopener">LinkedIn</a>
     </nav>
   </div>
-  <footer><strong>SeeGoEat</strong><span>© 2026 Kevin Hawkins · seegoeat.com</span><span>70+ countries · Curated with intention</span></footer>
+  <footer><strong>SeeGoEat</strong><span>© 2026 Kevin Hawkins · seegoeat.com</span><span>74+ countries · Curated with intention</span></footer>
 </div>
 
 <div class="pg" id="pg-city">
@@ -484,9 +484,11 @@ function buildCitySelect(active,filter){
   g.innerHTML=gridHTML;
   const total=Object.values(PLACES).reduce((s,v)=>s+v.length,0);
   const reviewed=Object.values(PLACES).reduce((s,v)=>s+v.filter(p=>p.f===true).length,0);
+  const cityCount=Object.keys(PLACES).length;
   document.getElementById('stTotal').textContent=total;
-  document.getElementById('stCities').textContent=Object.keys(PLACES).length;
+  document.getElementById('stCities').textContent=cityCount;
   document.getElementById('stReviewed').textContent=reviewed;
+  document.getElementById('stCitiesHero').textContent=cityCount+'+';
   const initSlug=decodeURIComponent(location.hash.slice(1));
   const initCity=initSlug?cityFromSlug(initSlug):null;
   if(initCity) goCity(initCity,true); else buildNav(null);
