@@ -200,8 +200,10 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
 .ai-section-arrow svg{display:block;}
 .ai-region-body{display:block;overflow:hidden;max-height:0;transition:max-height .4s ease;}
 .ai-region-body.open{max-height:200000px;}
-.ai-country-header{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-top:1px solid var(--rule);margin-top:16px;cursor:pointer;user-select:none;}
-.ai-country-header:hover .ai-country-name{color:var(--ink);}
+.ai-country-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-top:1px solid var(--rule);margin-top:16px;cursor:pointer;user-select:none;background-size:cover;background-position:center;position:relative;border-radius:2px;overflow:hidden;}
+.ai-country-hdr-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(15,14,12,.93) 0%,rgba(15,14,12,.7) 100%);pointer-events:none;}
+.ai-country-hdr-content{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;width:100%;}
+.ai-country-header:hover .ai-country-hdr-content .ai-country-name{color:var(--ink);}
 .ai-country-name{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-light);display:flex;align-items:center;gap:8px;}
 .ai-country-body{display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden;max-height:0;transition:max-height .35s ease;}
 .ai-country-body.open{max-height:100000px;}
@@ -250,6 +252,9 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
     <div class="stat"><span class="sn" id="stCities">—</span><span class="sl">Cities covered</span></div>
     <div class="stat"><span class="sn" id="stReviewed">—</span><span class="sl">My Favorites</span></div>
     <div class="stat"><span class="sn">0</span><span class="sl">Sponsored placements</span></div>
+  </div>
+  <div id="homeMapWrap" style="height:380px;width:100%;border-bottom:1px solid var(--rule);position:relative;">
+    <div id="homeMap" style="width:100%;height:100%"></div>
   </div>
   <div class="shd"><div class="shr"></div><span class="shl">Choose a city</span><div class="shr"></div></div>
 
@@ -498,6 +503,7 @@ function buildCitySelect(active,filter){
   const cities=Object.keys(PLACES).filter(k=>!filter||k.toLowerCase().includes(filter.toLowerCase()));
   sel.innerHTML='<option value="">'+(active||'Choose a city...')+'</option>'+cities.map(k=>`<option value="${k}"${k===active?' selected':''}>${META[k]?.emoji||''} ${k}</option>`).join('');
 }
+const CCODES={"Albania": "al", "Argentina": "ar", "Australia": "au", "Austria": "at", "Brazil": "br", "Canada": "ca", "Cape Verde": "cv", "Chile": "cl", "Colombia": "co", "Costa Rica": "cr", "Croatia": "hr", "Denmark": "dk", "France": "fr", "Georgia": "ge", "Germany": "de", "Greece": "gr", "Hungary": "hu", "Iceland": "is", "Ireland": "ie", "Italy": "it", "Japan": "jp", "Liberia": "lr", "Maldives": "mv", "Mexico": "mx", "Monaco": "mc", "Netherlands": "nl", "North Macedonia": "mk", "Norway": "no", "Oman": "om", "Philippines": "ph", "Poland": "pl", "Portugal": "pt", "Qatar": "qa", "Romania": "ro", "San Marino": "sm", "Scotland": "gb", "Seychelles": "sc", "South Africa": "za", "South Korea": "kr", "Spain": "es", "Sweden": "se", "São Tomé and Príncipe": "st", "Turkey": "tr", "UK": "gb", "USA": "us", "Vatican City": "va"};
 const COORDS={
 'Akureyri':[65.6835,-18.0878],'Algarve':[37.0179,-7.9304],'Amsterdam':[52.3676,4.9041],
 'Antalya':[36.8969,30.7133],'Antibes':[43.5804,7.1251],'Athens':[37.9838,23.7275],
@@ -598,12 +604,16 @@ function expandCollapseAll(){
       const ctryFaves=ctyCities.reduce((s,c)=>s+(PLACES[c]||[]).filter(p=>p.f===true).length,0);
       const flagEmoji=(META[ctyCities[0]]||{}).emoji||'';
       const cid='country-'+country.replace(/[^a-z0-9]/gi,'-');
-      gridHTML+=`<div class="ai-country-header" onclick="toggleSection('${cid}')">
-        <span class="ai-country-name"><span>${flagEmoji}</span><span>${country}</span></span>
-        <span class="ai-section-meta">
-          <span>${ctyCities.length} ${ctyCities.length===1?'city':'cities'} · ${ctryTotal} places · ${ctryFaves} faves</span>
-          <span class="ai-section-arrow" id="${cid}-arrow">${CHEVRON}</span>
-        </span>
+      const _cc=CCODES[country]||'';const _bgStyle=_cc?`background-image:url('https://flagcdn.com/w640/${_cc}.webp')`:'';
+      gridHTML+=`<div class="ai-country-header" onclick="toggleSection('${cid}')" style="${_bgStyle}">
+        <div class="ai-country-hdr-overlay"></div>
+        <div class="ai-country-hdr-content">
+          <span class="ai-country-name"><span>${flagEmoji}</span><span>${country}</span></span>
+          <span class="ai-section-meta">
+            <span>${ctyCities.length} ${ctyCities.length===1?'city':'cities'} · ${ctryTotal} places · ${ctryFaves} faves</span>
+            <span class="ai-section-arrow" id="${cid}-arrow">${CHEVRON}</span>
+          </span>
+        </div>
       </div>
       <div class="ai-country-body" id="${cid}">`;
       gridHTML+=ctyCities.map(c=>{
@@ -789,7 +799,69 @@ function _initSgeMap(){
   legend.addTo(_sgeMap);
 }
 
+
+window.addEventListener('load',function(){
+  if(typeof L==='undefined') return;
+  const hmap=L.map('homeMap',{center:[20,10],zoom:2,minZoom:2,zoomControl:false,attributionControl:false,scrollWheelZoom:false,dragging:!L.Browser.mobile,tap:false});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:18}).addTo(hmap);
+  const cityRegion={};
+  for(const [r,cities] of Object.entries(REGIONS)) cities.forEach(c=>cityRegion[c]=r);
+  const RC={'Europe':'#f06030','North America':'#4a7fe8','Latin America':'#3dc94a','Asia':'#e8b020','Africa & Islands':'#c040e8','Oceania':'#20c8d4','Middle East':'#e84040'};
+  for(const [city,ll] of Object.entries(COORDS)){
+    if(!PLACES[city]) continue;
+    const col=RC[cityRegion[city]]||'#9c9488';
+    const pl=PLACES[city]||[],fv=pl.filter(p=>p.f).length,mt=META[city]||{};
+    L.marker(ll,{icon:L.divIcon({
+      className:'',
+      html:`<div style="width:9px;height:9px;border-radius:50%;background:${col};border:1.5px solid rgba(255,255,255,.6);box-shadow:0 1px 4px rgba(0,0,0,.5);cursor:pointer"></div>`,
+      iconSize:[9,9],iconAnchor:[4,4],popupAnchor:[0,-6]
+    })}).addTo(hmap).bindPopup(`<div style="font-family:'DM Sans',sans-serif;min-width:140px">
+      <div style="font-size:20px;margin-bottom:3px">${mt.emoji||'📍'}</div>
+      <div style="font-weight:700;font-size:14px;margin-bottom:2px">${city}</div>
+      <div style="font-size:10px;color:#9c9488;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">${mt.country||''}</div>
+      <div style="font-size:11px;margin-bottom:8px;color:#9c9488">${pl.length} places · ${fv} faves</div>
+      <button class="sge-pin-btn" onclick="goCity('${city.replace(/'/g,"\'")}')">Explore →</button>
+    </div>`,{maxWidth:200});
+  }
+  // make map interactive on click but not on scroll
+  document.getElementById('homeMapWrap').addEventListener('click',function(){
+    hmap.scrollWheelZoom.enable();
+    hmap.dragging.enable();
+  });
+});
+
 </script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+window.addEventListener('load',function(){
+  if(typeof L==='undefined') return;
+  const hmap=L.map('homeMap',{center:[20,10],zoom:2,minZoom:2,zoomControl:false,attributionControl:false,scrollWheelZoom:false,dragging:!L.Browser.mobile,tap:false});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:18}).addTo(hmap);
+  const cityRegion={};
+  for(const [r,cities] of Object.entries(REGIONS)) cities.forEach(c=>cityRegion[c]=r);
+  const RC={'Europe':'#f06030','North America':'#4a7fe8','Latin America':'#3dc94a','Asia':'#e8b020','Africa & Islands':'#c040e8','Oceania':'#20c8d4','Middle East':'#e84040'};
+  for(const [city,ll] of Object.entries(COORDS)){
+    if(!PLACES[city]) continue;
+    const col=RC[cityRegion[city]]||'#9c9488';
+    const pl=PLACES[city]||[],fv=pl.filter(p=>p.f).length,mt=META[city]||{};
+    L.marker(ll,{icon:L.divIcon({
+      className:'',
+      html:`<div style="width:9px;height:9px;border-radius:50%;background:${col};border:1.5px solid rgba(255,255,255,.6);box-shadow:0 1px 4px rgba(0,0,0,.5);cursor:pointer"></div>`,
+      iconSize:[9,9],iconAnchor:[4,4],popupAnchor:[0,-6]
+    })}).addTo(hmap).bindPopup(`<div style="font-family:'DM Sans',sans-serif;min-width:140px">
+      <div style="font-size:20px;margin-bottom:3px">${mt.emoji||'📍'}</div>
+      <div style="font-weight:700;font-size:14px;margin-bottom:2px">${city}</div>
+      <div style="font-size:10px;color:#9c9488;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">${mt.country||''}</div>
+      <div style="font-size:11px;margin-bottom:8px;color:#9c9488">${pl.length} places · ${fv} faves</div>
+      <button class="sge-pin-btn" onclick="goCity('${city.replace(/'/g,"\'")}')">Explore →</button>
+    </div>`,{maxWidth:200});
+  }
+  // make map interactive on click but not on scroll
+  document.getElementById('homeMapWrap').addEventListener('click',function(){
+    hmap.scrollWheelZoom.enable();
+    hmap.dragging.enable();
+  });
+});
+
+</script>
 </body>
 </html>
