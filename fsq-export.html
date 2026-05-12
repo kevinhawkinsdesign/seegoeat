@@ -71,7 +71,7 @@ async function fetchAll(path, token, key, limit = 200) {
 }
 
 function categorize(categories) {
-  if (!categories || !categories.length) return 'other';
+  if (!categories || !categories.length || !categories[0] || !categories[0].name) return 'other';
   const n = categories[0].name.toLowerCase();
   if (/restaurant|café|coffee|food|bakery|bistro|diner|sushi|grill|kitchen|burger|cafe|seafood|pizz|taco|sandwich/.test(n)) return 'food';
   if (/bar|pub|brew|cocktail|wine|lounge|nightclub|club|tavern/.test(n)) return 'drinks';
@@ -128,13 +128,13 @@ async function runExport() {
     log(`✓ ${likes.length} liked venues\n`);
 
     log('Processing…');
-    const likedIds = new Set(likes.map(v => v.id));
+    const likedIds = new Set(likes.map(v => v && v.id).filter(Boolean));
 
     // Aggregate check-ins by venue
     const venueMap = {};
     for (const ci of checkins) {
       const v = ci.venue;
-      if (!v) continue;
+      if (!v || !v.id) continue;
       if (venueMap[v.id]) {
         venueMap[v.id].checkin_count++;
         if (ci.shout) venueMap[v.id].notes.push(ci.shout);
