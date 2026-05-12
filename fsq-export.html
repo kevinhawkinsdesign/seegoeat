@@ -44,9 +44,15 @@ async function fsq(path, token, params = {}) {
   url.searchParams.set('oauth_token', token);
   url.searchParams.set('v', V);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
-  const res = await fetch(url.toString());
-  if (!res.ok) throw new Error(`${res.status} ${await res.text()}`);
-  return res.json();
+  let res;
+  try {
+    res = await fetch(url.toString());
+  } catch(e) {
+    throw new Error('Network/CORS error: ' + e.message + ' — URL: ' + url.toString().slice(0,80));
+  }
+  const text = await res.text();
+  if (!res.ok) throw new Error(`HTTP ${res.status}: ${text.slice(0,200)}`);
+  try { return JSON.parse(text); } catch(e) { throw new Error('Bad JSON: ' + text.slice(0,200)); }
 }
 
 async function fetchAll(path, token, key, limit = 200) {
