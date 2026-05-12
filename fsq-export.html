@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foursquare Export — SeeGoEat Admin</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0f0e0c;color:#ede8e0;font-family:'DM Sans',system-ui,sans-serif;padding:24px;min-height:100vh;}
+h1{font-size:22px;margin-bottom:8px;color:#f06030;}
+p{font-size:14px;color:#9c9488;margin-bottom:20px;line-height:1.6;}
+input{width:100%;background:#1a1815;border:1px solid #252220;color:#ede8e0;padding:12px 16px;font-size:13px;font-family:monospace;border-radius:4px;outline:none;margin-bottom:12px;}
+input:focus{border-color:#f06030;}
+button{background:#f06030;color:#0f0e0c;font-weight:700;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;padding:13px 24px;border:none;border-radius:4px;cursor:pointer;width:100%;margin-bottom:8px;}
+button:disabled{opacity:.5;cursor:default;}
+.log{background:#1a1815;border:1px solid #252220;border-radius:4px;padding:14px;font-size:12px;font-family:monospace;line-height:1.8;min-height:60px;margin-top:16px;white-space:pre-wrap;word-break:break-all;}
+.dl{display:none;background:#3dc94a;color:#0f0e0c;font-weight:700;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;padding:13px 24px;border:none;border-radius:4px;cursor:pointer;width:100%;margin-top:8px;text-align:center;text-decoration:none;}
+.warn{font-size:11px;color:#5c5750;margin-top:12px;line-height:1.5;}
+</style>
+</head>
+<body>
+<h1>Foursquare Exporter</h1>
+<p>Fetches all your check-ins and liked venues directly from Foursquare and downloads a JSON file you can send to Claude.</p>
+
+<input id="tok" type="password" placeholder="Paste your OAuth access token here" autocomplete="off" spellcheck="false">
+<button id="btn" onclick="runExport()">Export My Foursquare Data</button>
+<a class="dl" id="dl">Download foursquare_favorites.json</a>
+
+<div class="log" id="log">Ready. Paste your token and tap Export.</div>
+
+<p class="warn">This page only runs in your browser — nothing is sent to any server. Delete this page from the repo when done.</p>
+
+<script>
+const BASE = 'https://api.foursquare.com/v2';
+const V = '20240101';
+let exportedData = null;
+
+function log(msg) {
+  document.getElementById('log').textContent += '\n' + msg;
+}
+
+async function fsq(path, token, params = {}) {
+  const url = new URL(BASE + path);
+  url.searchParams.set('oauth_token', token);
+  url.searchParams.set('v', V);
+  for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error(`${res.status} ${await res.text()}`);
+  return res.json();
+}
+
+async function fetchAll(path, token, key, limit = 200) {
+  const all = [];
+  let offset = 0;
+  while (true) {
+    const data = await fsq(path, token, { limit, offset });
+    const block = data.response[key];
+    const items = block.items || [];
+    all.push(...items);
+    log(`  fetched ${all.length} / ${block.count}`);
+    if (all.length >= block.count || items.length === 0) break;
+    offset += limit;
+  }
+  return all;
+}
+
+function categorize(categories) {
+  if (!categories || !categories.length) return 'other';
+  const n = categories[0].name.toLowerCase();
+  if (/restaurant|café|coffee|food|bakery|bistro|diner|sushi|grill|kitchen|burger|cafe|seafood|pizz|taco|sandwich/.test(n)) return 'food';
+  if (/bar|pub|brew|cocktail|wine|lounge|nightclub|club|tavern/.test(n)) return 'drinks';
+  if (/hotel|hostel|resort|inn|motel|lodge/.test(n)) return 'stay';
+  if (/museum|park|beach|monument|landmark|gallery|theater|theatre|historic|garden|plaza|castle|church|temple|cathedral/.test(n)) return 'see';
+  return 'other';
+}
+
+function toPlace(venue, isFave, checkinCount = 0, notes = []) {
+  const loc = venue.location || {};
+  const lat = loc.lat, lng = loc.lng;
+  const mapsUrl = (lat && lng)
+    ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((venue.name||'') + ' ' + (loc.city||'') + ' ' + (loc.country||''))}`;
+  return {
+    name: venue.name || 'Unknown',
+    category: categorize(venue.categories),
+    foursquare_category: (venue.categories || [{}])[0].name || '',
+    address: loc.address || '',
+    city: loc.city || '',
+    state: loc.state || '',
+    country: loc.country || '',
+    lat, lng,
+    checkin_count: checkinCount,
+    is_favorite: isFave,
+    notes,
+    google_maps_url: mapsUrl,
+    foursquare_id: venue.id || '',
+  };
+}
+
+async function runExport() {
+  const token = document.getElementById('tok').value.trim();
+  if (!token) { alert('Paste your token first'); return; }
+
+  const btn = document.getElementById('btn');
+  btn.disabled = true;
+  btn.textContent = 'Exporting…';
+  document.getElementById('log').textContent = '';
+
+  try {
+    log('Verifying token…');
+    const me = await fsq('/users/self', token);
+    const u = me.response.user;
+    log(`✓ ${u.firstName} ${u.lastName} (@${u.handle || '?'})`);
+    log(`  ${u.checkins.count} check-ins · ${u.followers?.count || 0} followers\n`);
+
+    log('Fetching check-ins…');
+    const checkins = await fetchAll('/users/self/checkins', token, 'checkins', 250);
+    log(`✓ ${checkins.length} check-ins\n`);
+
+    log('Fetching liked venues…');
+    const likes = await fetchAll('/users/self/venuelikes', token, 'venues', 200);
+    log(`✓ ${likes.length} liked venues\n`);
+
+    log('Processing…');
+    const likedIds = new Set(likes.map(v => v.id));
+
+    // Aggregate check-ins by venue
+    const venueMap = {};
+    for (const ci of checkins) {
+      const v = ci.venue;
+      if (!v) continue;
+      if (venueMap[v.id]) {
+        venueMap[v.id].checkin_count++;
+        if (ci.shout) venueMap[v.id].notes.push(ci.shout);
+      } else {
+        venueMap[v.id] = toPlace(v, likedIds.has(v.id), 1, ci.shout ? [ci.shout] : []);
+      }
+    }
+
+    // Add liked venues not in check-ins
+    for (const v of likes) {
+      if (!venueMap[v.id]) {
+        venueMap[v.id] = toPlace(v, true, 0, []);
+      } else {
+        venueMap[v.id].is_favorite = true;
+      }
+    }
+
+    const allPlaces = Object.values(venueMap);
+    const favorites = allPlaces.filter(p => p.is_favorite);
+
+    log(`✓ ${allPlaces.length} unique places`);
+    log(`✓ ${favorites.length} favorites`);
+
+    exportedData = {
+      total: allPlaces.length,
+      favorites: favorites.length,
+      exported_at: new Date().toISOString(),
+      places: favorites
+    };
+
+    // Trigger download
+    const blob = new Blob([JSON.stringify(exportedData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.getElementById('dl');
+    a.href = url;
+    a.download = 'foursquare_favorites.json';
+    a.style.display = 'block';
+
+    log('\n✓ Done! Tap the green button to download.');
+    btn.textContent = 'Done ✓';
+
+  } catch (err) {
+    log('✗ Error: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = 'Retry';
+  }
+}
+</script>
+</body>
+</html>
