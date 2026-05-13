@@ -66,6 +66,13 @@ CITY_ALIASES = {
     "Malaga":             "Marbella/Málaga",
     "Buenos Aires":       "Buenos Aires",
     "Porto Alegre":       None,   # not covered — skip
+    "Nordhavn":           "Copenhagen",
+    "København Ø":        "Copenhagen",
+    "København K":        "Copenhagen",
+    "El Prat de Llobregat": None,   # airport area — skip
+    "Taguig City":        "Manila",
+    "Enniskerry":         "Dublin",
+    "Ballsbridge":        "Dublin",
 }
 
 # Cities we actively cover (pulled from PLACES keys at runtime)
