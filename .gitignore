@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+*.pyo
+tools/foursquare_token.txt
+tools/foursquare_favorites.json
+tools/foursquare_places_full.json
