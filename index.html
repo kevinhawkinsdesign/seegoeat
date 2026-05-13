@@ -22,6 +22,20 @@ body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;f
 .nb{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:0 18px;height:100%;display:flex;align-items:center;cursor:pointer;color:var(--ink-muted);gap:6px;border-right:1px solid var(--rule);transition:color .15s;}
 .nb:hover{color:var(--ink);}
 .pg{display:none;} .pg.on{display:block;}
+.about-pg{max-width:760px;margin:0 auto;padding:72px 48px 96px;}
+.about-pg h1{font-family:'Playfair Display',serif;font-size:52px;font-weight:700;line-height:1.1;letter-spacing:-0.03em;margin-bottom:10px;}
+.about-pg h1 em{font-style:italic;color:var(--accent);}
+.about-pg .about-role{font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:48px;display:block;}
+.about-pg .about-lead{font-size:20px;color:var(--ink-light);line-height:1.75;margin-bottom:40px;font-weight:300;}
+.about-pg p{font-size:16px;color:var(--ink-light);line-height:1.8;margin-bottom:22px;}
+.about-pg .about-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin:44px 0;}
+.about-stat{background:var(--paper);padding:28px 24px;}
+.about-stat-n{font-family:'Playfair Display',serif;font-size:40px;font-weight:700;letter-spacing:-0.03em;color:var(--ink);display:block;margin-bottom:4px;}
+.about-stat-l{font-size:11px;letter-spacing:0.13em;text-transform:uppercase;color:var(--ink-muted);}
+.about-links{display:flex;flex-direction:column;border-top:1px solid var(--rule);margin-top:48px;}
+.about-link{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--rule);font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-light);text-decoration:none;transition:color .15s;}
+.about-link:hover{color:var(--accent);}
+.about-link::after{content:"↗";opacity:.5;}
 .mast{position:relative;min-height:92vh;display:flex;align-items:flex-end;padding:0;border-bottom:1px solid var(--rule);overflow:hidden;background:#000;}.mast-bg{position:absolute;inset:0;background-image:url(https://www.kevinthecreator.com/wp-content/uploads/2022/02/IMG_2202.jpg);background-size:cover;background-position:center top;opacity:.55;}.mast-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.92) 0%,rgba(0,0,0,.3) 60%,rgba(0,0,0,.1) 100%);}.mast-content{position:relative;z-index:1;padding:52px 48px 64px;}
 .kicker{font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;display:flex;align-items:center;gap:12px;text-shadow:0 2px 12px rgba(0,0,0,.8);}
 .kicker::after{content:'';display:block;height:1px;width:44px;background:var(--accent);}
@@ -113,6 +127,9 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
 .city-select-wrap select{background:var(--warm);border:1px solid var(--rule);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 14px;border-radius:4px;outline:none;cursor:pointer;min-width:200px;max-width:260px;}
 
 @media(max-width:960px){
+  .top-nav{padding:0 16px;height:56px;}
+  .nav-home{height:56px;font-size:11px;padding:0 14px;}
+  .city-select-wrap select{min-width:0;max-width:160px;font-size:11px;}
   .vprops{grid-template-columns:1fr;}
   .vprop{border-right:none;border-bottom:1px solid var(--rule);}
   .vprop:last-child{border-bottom:none;}
@@ -139,6 +156,14 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
   .sn{font-size:30px;}
 }
 @media(max-width:560px){
+  .top-nav{padding:0 10px;}
+  .about-pg{padding:44px 20px 72px;}
+  .about-pg h1{font-size:36px;}
+  .about-pg .about-lead{font-size:17px;}
+  .about-stats{grid-template-columns:1fr!important;}
+  .nav-home{padding:0 10px;font-size:11px;}
+  .logo img{height:24px;}
+  .city-select-wrap select{max-width:110px;}
   .vprops{grid-template-columns:1fr;}
   .vprop{border-right:none!important;border-bottom:1px solid var(--rule);}
   .vprop:last-child{border-bottom:none;}
@@ -235,13 +260,19 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
 </head>
 <body>
 <nav class="top-nav" id="topNav">
-  <span class="logo" onclick="goHome()"><img src="logo.png" alt="SeeGoEat"></span>
+  <div class="nav-left">
+    <span class="logo" onclick="goHome()"><img src="logo.png" alt="SeeGoEat"></span>
+    <span class="nav-home on" id="navHomeBtn" onclick="goHome()">Home</span>
+    <span class="nav-home" id="navAboutBtn" onclick="goAbout()">About</span>
+  </div>
   <div class="nav-links" id="navLinks"></div>
-  <span class="map-btn" id="mapNavBtn" onclick="goMap()">Map</span>
-  <div class="city-select-wrap">
-    <select id="citySelect" size="1" onchange="if(this.value)goCity(this.value)">
-      <option value="">Choose a city...</option>
-    </select>
+  <div class="nav-right">
+    <div class="city-select-wrap">
+      <select id="citySelect" size="1" onchange="if(this.value)goCity(this.value)">
+        <option value="">Choose a city...</option>
+      </select>
+    </div>
+    <span class="map-btn" id="mapNavBtn" onclick="goMap()">↗ Map</span>
   </div>
 </nav>
 
@@ -308,6 +339,29 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
   <footer><strong>SeeGoEat</strong><span>© 2026 Kevin Hawkins · seegoeat.com</span><span>74+ countries · Curated with intention</span></footer>
 </div>
 
+<div class="pg" id="pg-about">
+  <div class="about-pg">
+    <h1>Kevin<br><em>Hawkins</em></h1>
+    <span class="about-role">Designer · Traveller · Food obsessive</span>
+    <p class="about-lead">I've spent three decades eating, sleeping, and designing my way across 74 countries. SeeGoEat is the honest record of what made it worth it.</p>
+    <p>I'm a designer by trade — working across brand, digital, and experience — which means I've always been unusually attentive to the details that separate a place from an experience. The quality of the light at a particular table. Whether a hotel lobby makes you feel like a guest or a transaction. The difference between a wine list curated with curiosity and one assembled from a distributor's catalogue.</p>
+    <p>I'm based in Barcelona, where I run <strong>The Common Thread</strong> — a food and wine community of 1,500 members hosting supper clubs, chef dinners, and wine tastings. It started as a way to bring the best of what I'd found abroad to the city I'd chosen to call home. It's grown into something I'm genuinely proud of.</p>
+    <p>Both Booking.com and Kayak independently place me in the top 1% of travellers worldwide. I'm not sure whether that's an achievement or a mild cause for concern, but it does mean the data behind SeeGoEat is unusual in its depth. Every city here has been walked, eaten, and slept in — repeatedly.</p>
+    <p>Nothing on this site is sponsored, algorithmically generated, or incentivised. If I saved something, it earned it — usually after several visits and at least one very good meal.</p>
+    <div class="about-stats">
+      <div class="about-stat"><span class="about-stat-n">74+</span><span class="about-stat-l">Countries visited</span></div>
+      <div class="about-stat"><span class="about-stat-n" id="aboutCities">146</span><span class="about-stat-l">Cities covered</span></div>
+      <div class="about-stat"><span class="about-stat-n">3</span><span class="about-stat-l">Decades travelling</span></div>
+    </div>
+    <nav class="about-links">
+      <a href="https://kevinhawkinsdesign.com" class="about-link" target="_blank" rel="noopener">Design portfolio — kevinhawkinsdesign.com</a>
+      <a href="https://luma.com/thecommonthread" class="about-link" target="_blank" rel="noopener">The Common Thread community</a>
+      <a href="http://instagram.com/kevinhawkinsdesign" class="about-link" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.linkedin.com/in/kevinhawkinsdesign/" class="about-link" target="_blank" rel="noopener">LinkedIn</a>
+    </nav>
+  </div>
+  <footer><strong>SeeGoEat</strong><span>© 2026 Kevin Hawkins · seegoeat.com</span><span>74+ countries · Curated with intention</span></footer>
+</div>
 <div class="pg" id="pg-city">
   <div class="chero">
     <div class="chero-bg" id="cheroBg"></div>
@@ -420,12 +474,29 @@ function loadCityHero(c,m){
     .catch(()=>{ _imgCache[title]=''; });
 }
 
+function goAbout(){
+  document.getElementById('pg-home').classList.remove('on');
+  document.getElementById('pg-city').classList.remove('on');
+  document.getElementById('pg-about').classList.add('on');
+  document.getElementById('pg-submit').classList.remove('on');
+  document.getElementById('pg-map').classList.remove('on');
+  document.getElementById('mapNavBtn').classList.remove('on');
+  document.getElementById('navHomeBtn').classList.remove('on');
+  document.getElementById('navAboutBtn').classList.remove('on');
+  document.getElementById('navAboutBtn').classList.add('on');
+  buildNav(null);
+  history.pushState({},'',location.pathname+'#about');
+  window.scrollTo(0,0);
+}
 function goHome(noPush){
   document.getElementById('pg-home').classList.add('on');
   document.getElementById('pg-city').classList.remove('on');
   document.getElementById('pg-submit').classList.remove('on');
   document.getElementById('pg-map').classList.remove('on');
   document.getElementById('mapNavBtn').classList.remove('on');
+  document.getElementById('navHomeBtn').classList.add('on');
+  document.getElementById('navAboutBtn').classList.remove('on');
+  document.getElementById('pg-about').classList.remove('on');
   buildNav(null);
   if(!noPush)history.pushState({},'',location.pathname+location.search);
   window.scrollTo(0,0);
@@ -448,6 +519,7 @@ function goCity(c,noPush){
   document.getElementById('pg-submit').classList.remove('on');
   document.getElementById('pg-map').classList.remove('on');
   document.getElementById('mapNavBtn').classList.remove('on');
+  document.getElementById('navHomeBtn').classList.remove('on');
   buildNav(c);loadCityHero(c,m);
   if(!noPush)_pushHash(slug(c));
   window.scrollTo(0,0);
@@ -831,6 +903,8 @@ function goMap(){
   ['pg-home','pg-city','pg-submit'].forEach(id=>document.getElementById(id).classList.remove('on'));
   document.getElementById('pg-map').classList.add('on');
   document.getElementById('mapNavBtn').classList.add('on');
+  document.getElementById('navHomeBtn').classList.remove('on');
+  document.getElementById('navAboutBtn').classList.remove('on');
   buildNav(null);
   window.scrollTo(0,0);
   if(!_sgeMap) _initSgeMap();
