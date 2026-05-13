@@ -28,7 +28,7 @@ body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;f
 .mast h1{font-family:'Playfair Display',serif;font-size:66px;line-height:1.06;font-weight:700;letter-spacing:-0.03em;margin-bottom:22px;}
 .mast h1 em{font-style:italic;color:var(--accent);}
 .mast-sub{font-size:17px;color:var(--ink-light);max-width:520px;line-height:1.75;}
-.stats{display:flex;border-bottom:1px solid var(--rule);}
+.vprops{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--rule);}.vprop{padding:36px 40px;border-right:1px solid var(--rule);}.vprop:last-child{border-right:none;}.vprop-icon{font-size:32px;margin-bottom:16px;display:block;}.vprop-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;letter-spacing:-0.02em;margin-bottom:8px;font-style:italic;color:var(--ink);}.vprop-desc{font-size:14px;color:var(--ink-light);line-height:1.7;}.stats{display:flex;border-bottom:1px solid var(--rule);}
 .stat{flex:1;padding:26px 30px;border-right:1px solid var(--rule);}
 .stat:last-child{border-right:none;}
 .sn{font-family:'Playfair Display',serif;font-size:40px;font-weight:700;line-height:1;display:block;margin-bottom:5px;}
@@ -113,6 +113,11 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
 .city-select-wrap select{background:var(--warm);border:1px solid var(--rule);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 14px;border-radius:4px;outline:none;cursor:pointer;min-width:200px;max-width:260px;}
 
 @media(max-width:960px){
+  .vprops{grid-template-columns:1fr;}
+  .vprop{border-right:none;border-bottom:1px solid var(--rule);}
+  .vprop:last-child{border-bottom:none;}
+  .vprop-title{font-size:20px;}
+  .vprop{padding:28px 24px;}
   .city-select-wrap select{min-width:0;max-width:none;width:100%;}
   .city-select-wrap{flex:1;}
   .mast h1{font-size:40px;}
@@ -134,6 +139,9 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
   .sn{font-size:30px;}
 }
 @media(max-width:560px){
+  .vprops{grid-template-columns:1fr;}
+  .vprop{border-right:none!important;border-bottom:1px solid var(--rule);}
+  .vprop:last-child{border-bottom:none;}
   .pgrid{grid-template-columns:1fr;}
   .pcard{border-right:none!important;}
   .chero h2{font-size:32px;}
@@ -244,7 +252,24 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
     <div class="mast-content">
       <p class="kicker">Places worth the detour.</p>
       <h1>See. Go. <em>Eat.</em></h1>
-      <p class="mast-sub">Hi, I'm Kevin. I've been to 74 countries over 3 decades — <span id="stCitiesHero">—</span> cities covered, 40 times around the Earth. Booking.com and Kayak both place me in the top 1% of travellers worldwide. These aren't algorithms or sponsored posts. When I save something, it earned it.</p>
+      <p class="mast-sub">I'm Kevin — three decades, 74 countries, and somewhere north of 40 laps around the Earth. Booking.com and Kayak both rank me in the top 1% of travellers worldwide, which mostly means I've eaten an alarming amount of pasta and arrived at far too many hotel lobbies at 2am. None of this is sponsored or algorithmic. Every place here earned its spot.</p>
+    </div>
+  </div>
+  <div class="vprops">
+    <div class="vprop">
+      <span class="vprop-icon">👁</span>
+      <div class="vprop-title">See</div>
+      <p class="vprop-desc">Uncover the places that make a city worth visiting — the neighbourhoods, viewpoints, and hidden corners that don't make the brochures.</p>
+    </div>
+    <div class="vprop">
+      <span class="vprop-icon">🧳</span>
+      <div class="vprop-title">Go</div>
+      <p class="vprop-desc">Stay somewhere that actually adds to the trip. Riads, boutique hotels, beach houses, and city boltholes chosen for character over category.</p>
+    </div>
+    <div class="vprop">
+      <span class="vprop-icon">🍽</span>
+      <div class="vprop-title">Eat</div>
+      <p class="vprop-desc">Eat extraordinarily well — whether that's a three-Michelin-star tasting menu or a market stall that changes your understanding of a single ingredient.</p>
     </div>
   </div>
   <div class="stats">
