@@ -15,6 +15,7 @@ button{background:#f06030;color:#0f0e0c;font-weight:700;font-size:13px;letter-sp
 button:disabled{opacity:.5;cursor:default;}
 .log{background:#1a1815;border:1px solid #252220;border-radius:4px;padding:14px;font-size:12px;font-family:monospace;line-height:1.8;min-height:60px;margin-top:16px;white-space:pre-wrap;word-break:break-all;}
 .dl{display:none;background:#3dc94a;color:#0f0e0c;font-weight:700;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;padding:13px 24px;border:none;border-radius:4px;cursor:pointer;width:100%;margin-top:8px;text-align:center;text-decoration:none;}
+.dl2{display:none;background:#3d8bc9;color:#0f0e0c;font-weight:700;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;padding:13px 24px;border:none;border-radius:4px;cursor:pointer;width:100%;margin-top:8px;text-align:center;text-decoration:none;}
 .warn{font-size:11px;color:#5c5750;margin-top:12px;line-height:1.5;}
 </style>
 </head>
@@ -25,6 +26,7 @@ button:disabled{opacity:.5;cursor:default;}
 <input id="tok" type="password" placeholder="Paste your OAuth access token here" autocomplete="off" spellcheck="false">
 <button id="btn" onclick="runExport()">Export My Foursquare Data</button>
 <a class="dl" id="dl">Download foursquare_favorites.json</a>
+<a class="dl2" id="dl2">Download foursquare_places_full.json (all check-ins)</a>
 
 <div class="log" id="log">Ready. Paste your token and tap Export.</div>
 
@@ -159,22 +161,35 @@ async function runExport() {
     log(`✓ ${allPlaces.length} unique places`);
     log(`✓ ${favorites.length} favorites`);
 
-    exportedData = {
+    // Favorites download
+    const favData = {
       total: allPlaces.length,
       favorites: favorites.length,
       exported_at: new Date().toISOString(),
       places: favorites
     };
-
-    // Trigger download
-    const blob = new Blob([JSON.stringify(exportedData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+    const favBlob = new Blob([JSON.stringify(favData, null, 2)], { type: 'application/json' });
+    const favUrl = URL.createObjectURL(favBlob);
     const a = document.getElementById('dl');
-    a.href = url;
+    a.href = favUrl;
     a.download = 'foursquare_favorites.json';
     a.style.display = 'block';
 
-    log('\n✓ Done! Tap the green button to download.');
+    // Full check-ins download
+    const fullData = {
+      total: allPlaces.length,
+      favorites: favorites.length,
+      exported_at: new Date().toISOString(),
+      places: allPlaces
+    };
+    const fullBlob = new Blob([JSON.stringify(fullData, null, 2)], { type: 'application/json' });
+    const fullUrl = URL.createObjectURL(fullBlob);
+    const a2 = document.getElementById('dl2');
+    a2.href = fullUrl;
+    a2.download = 'foursquare_places_full.json';
+    a2.style.display = 'block';
+
+    log('\n✓ Done! Green = favorites only, Blue = all ' + allPlaces.length + ' unique places.');
     btn.textContent = 'Done ✓';
 
   } catch (err) {
