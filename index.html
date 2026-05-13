@@ -453,18 +453,7 @@ function selCat(k){
 
 const _pImgC=JSON.parse(sessionStorage.getItem('_pImgC')||'{}');
 function _savePIC(){try{sessionStorage.setItem('_pImgC',JSON.stringify(_pImgC));}catch(e){}}
-function injectCardImg(name,url,cityKey){
-  document.querySelectorAll('.pcard').forEach(el=>{
-    const nm=el.querySelector('.pname');
-    if(nm&&nm.textContent.trim()===name&&!el.querySelector('.pthumb')){
-      const img=document.createElement('img');
-      img.className='pthumb';img.src=url;img.alt='';img.loading='lazy';
-      img.onerror=()=>{_pImgC[cityKey+'|'+name]='';_savePIC();el.classList.remove('has-img');img.remove();};
-      el.classList.add('has-img');
-      el.insertBefore(img,el.firstChild);
-    }
-  });
-}
+function injectCardImg(name,url,cityKey){/* images shown in modal only */}
 function fetchFaveThumbs(places,cityName){
   places.filter(p=>p.f&&!p.img).forEach((p,i)=>{
     const key=cityName+'|'+p.n;
@@ -493,10 +482,9 @@ function renderPlaces(k){
   document.getElementById('catCount').textContent=places.length+' place'+(places.length!==1?'s':'');
   document.getElementById('plGrid').innerHTML=places.map(p=>{
     const pill=p.c+(p.r?` · ${p.r}★`:'');
-    const thumb=p.img?`<img class="pthumb" src="${p.img}" alt="" loading="lazy">`:'';
     const faveBadge=(p.f&&k!=='My Favorites')?'<span class="fave-badge">♥</span>':'';
-    return `<div class="pcard${p.img?' has-img':''}" onclick='openM(${JSON.stringify(p).replace(/'/g,"&#39;")},"${city.replace(/"/g,'&quot;')}")'>
-      ${thumb}${faveBadge}
+    return `<div class="pcard" onclick='openM(${JSON.stringify(p).replace(/'/g,"&#39;")},"${city.replace(/"/g,'&quot;')}")'>
+      ${faveBadge}
       <span class="ppill">${pill}</span>
       <div class="pname">${p.n}</div>
       ${p.d?`<div class="pdesc">${p.d}</div>`:''}
