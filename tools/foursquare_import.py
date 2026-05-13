@@ -81,7 +81,59 @@ CITY_ALIASES = {
     "Tagaytay":           "Manila",
     "Silang":             None,   # too remote from Manila city
     "Truckee":            "Lake Tahoe",
+    "Jamaica":            None,   # Jamaica, Queens NY (JFK area) — not the island
+    "Keflavík":           "Keflavík",
+    "Monrovia":           None,   # Monrovia CA suburb — not Liberia
 }
+
+# ── Exclusion filters ────────────────────────────────────────────────────────
+
+# Foursquare categories that are never useful travel recommendations
+SKIP_CATEGORIES = {
+    # Transport infrastructure
+    "Airport Gate", "Airport Terminal", "Airport Service", "Airport Lounge",
+    "International Airport", "Airport", "Airline",
+    "Rail Station", "Metro Station", "Train Station", "Bus Station",
+    "Bus Terminal", "Transit Station", "Light Rail", "Subway",
+    "Ferry", "Port", "Runway",
+    # Offices / workplaces
+    "Office", "Tech Startup", "Coworking Space",
+    # Private residences
+    "Apartment or Condo", "Residential Building",
+    # Generic geographic labels (not venues)
+    "City", "Neighborhood", "Town", "Village", "State",
+    # Transport (additional)
+    "Marine Terminal", "Harbor or Marina",
+    # Utilities
+    "Fuel Station", "Gas Station",
+    # Government admin
+    "Government Building",
+    # Medical
+    "Hospital", "Medical Center", "Doctor's Office",
+}
+
+# Big-chain name keywords (lowercase); matched as whole words or prefix
+SKIP_CHAIN_NAMES = {
+    "starbucks", "chipotle", "mcdonald's", "mcdonalds", "subway",
+    "walmart", "cvs", "walgreens", "panera bread", "nordstrom rack",
+    "whole foods", "aldi", "kfc", "burger king", "taco bell",
+    "dunkin'", "dunkin donuts", "pizza hut", "domino's", "dominoes",
+    "7-eleven", "seven-eleven", "home depot", "lowe's", "lowes",
+    "costco", "sam's club", "bed bath", "old navy", "gap store",
+    "h&m", "zara store", "forever 21",
+}
+
+def should_skip(place):
+    """Return True if this place should be excluded from import."""
+    cat = place.get("foursquare_category", "")
+    if cat in SKIP_CATEGORIES:
+        return True
+    name_lower = place.get("name", "").lower().strip()
+    for chain in SKIP_CHAIN_NAMES:
+        if name_lower == chain or name_lower.startswith(chain + " "):
+            return True
+    return False
+
 
 # Cities we actively cover (pulled from PLACES keys at runtime)
 KNOWN_CITIES = set()
@@ -249,8 +301,13 @@ def main():
     skipped_city = []
     new_places_by_city = defaultdict(list)
 
+    skipped_filter = []
     for place in places:
         if args.min_checkins and place.get("checkin_count", 0) < args.min_checkins:
+            continue
+
+        if should_skip(place):
+            skipped_filter.append(f"{place['name']} [{place.get('foursquare_category','')}]")
             continue
 
         fsq_city = place.get("city", "")
@@ -265,6 +322,7 @@ def main():
         entry = build_place_entry(place, is_fave)
         new_places_by_city[canonical].append(entry)
 
+    print(f"Filtered out (transport/office/chain): {len(skipped_filter)}")
     print(f"Places to process: {sum(len(v) for v in new_places_by_city.values())} across {len(new_places_by_city)} cities")
     print(f"Skipped (city not covered): {len(skipped_city)}")
 
