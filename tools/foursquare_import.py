@@ -73,6 +73,14 @@ CITY_ALIASES = {
     "Taguig City":        "Manila",
     "Enniskerry":         "Dublin",
     "Ballsbridge":        "Dublin",
+    "West Hollywood":     "Los Angeles",
+    "Pensacola Beach":    "Pensacola",
+    "Gulf Breeze":        "Pensacola",
+    "Mill Valley":        "San Francisco",
+    "Miami Beach":        "Miami",
+    "Tagaytay":           "Manila",
+    "Silang":             None,   # too remote from Manila city
+    "Truckee":            "Lake Tahoe",
 }
 
 # Cities we actively cover (pulled from PLACES keys at runtime)
