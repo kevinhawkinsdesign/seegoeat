@@ -126,7 +126,7 @@ async function runExport() {
     log(`✓ ${checkins.length} check-ins\n`);
 
     log('Fetching liked venues…');
-    const likes = await fetchAll('/users/self/venuelikes', token, 'venues', 200);
+    const likes = await fetchAll('/users/self/venuelikes', token, 'venues', 50);
     log(`✓ ${likes.length} liked venues\n`);
 
     log('Processing…');
