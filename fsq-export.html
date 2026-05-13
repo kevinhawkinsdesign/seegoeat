@@ -89,7 +89,7 @@ function toPlace(venue, isFave, checkinCount = 0, notes = []) {
   return {
     name: venue.name || 'Unknown',
     category: categorize(venue.categories),
-    foursquare_category: (venue.categories || [{}])[0].name || '',
+    foursquare_category: (venue.categories && venue.categories.length ? venue.categories[0] : {}).name || '',
     address: loc.address || '',
     city: loc.city || '',
     state: loc.state || '',
@@ -145,6 +145,7 @@ async function runExport() {
 
     // Add liked venues not in check-ins
     for (const v of likes) {
+      if (!v || !v.id) continue;
       if (!venueMap[v.id]) {
         venueMap[v.id] = toPlace(v, true, 0, []);
       } else {
