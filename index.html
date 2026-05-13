@@ -14,7 +14,7 @@ html{scroll-behavior:smooth;}
 body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.7;min-height:100vh;}
 .top-nav{border-bottom:2px solid var(--ink);background:var(--paper);position:sticky;top:0;z-index:100;display:flex;align-items:stretch;min-height:52px;}
 .logo{padding:8px 20px;border-right:1px solid var(--rule);cursor:pointer;display:flex;align-items:center;}
-.logo img{height:32px;width:auto;display:block;}
+.logo img{height:32px;width:auto;display:block;filter:brightness(0) invert(1);}
 .nav-links{display:none;}
 .nav-links::-webkit-scrollbar{display:none;}
 .nl{font-size:11px;letter-spacing:0.11em;text-transform:uppercase;padding:0 15px;height:100%;display:flex;align-items:center;border-right:1px solid var(--rule);cursor:pointer;color:var(--ink-muted);white-space:nowrap;transition:color .15s,background .15s;}
@@ -553,7 +553,7 @@ const COORDS={
 'Warsaw':[52.2297,21.0122],'Washington DC':[38.9072,-77.0369],'Zakynthos':[37.7907,20.9042],
 'Èze':[43.7285,7.3614],'Lake Tahoe':[39.0968,-120.0324],'Las Vegas':[36.1699,-115.1398],'Oakland':[37.8044,-122.2712],'Páros':[37.0853,25.1489],'Palma':[39.5696,2.6502]
 ,'Providenciales':[21.7941,-72.2217],'Aruba':[12.5092,-69.9803],'Willemstad':[12.1224,-68.8824],'Bonaire':[12.1784,-68.2385],'Paramaribo':[5.852,-55.2038],'Kingston':[18.0179,-76.8099],'Bahamas':[25.048,-77.3554],'Havana':[23.1136,-82.3666],'Santo Domingo':[18.4861,-69.9312],'San Juan':[18.4655,-66.1057],'Basseterre':[17.2948,-62.7261],'Charlotte':[35.2271,-80.8431],'Cincinnati':[39.1031,-84.512]};
-const REGIONS = {{
+const REGIONS = {
   'Europe': ['Akureyri', 'Algarve', 'Amsterdam', 'Antalya', 'Antibes', 'Athens', 'Barcelona', 'Palma', 'Bari', 'Berlin', 'Bilbao', 'Bologna', 'Bordeaux', 'Brescia', 'Bucharest', 'Budapest', 'Cannes', 'Cap Ferret', 'Cascais', 'Catania', 'Cologne', 'Comporta', 'Copenhagen', 'Corfu', 'Crete', 'Dalyan', 'Dublin', 'Edinburgh', 'Eindhoven', 'Èze', 'Florence', 'Freiburg', 'Gran Canaria', 'Hamburg', 'Helsingborg', 'Ibiza', 'Istanbul', 'Keflavík', 'Koufonisia', 'Lisbon', 'London', 'Madeira', 'Madrid', 'Mallorca', 'Malmö', 'Marbella/Málaga', 'Marmaris', 'Menorca', 'Meteora', 'Milan', 'Monaco', 'Munich', 'Naples', 'Nea Moudania', 'Nice', 'Oslo', 'Palermo', 'Paris', 'Paros', 'Páros', 'Peloponnese', 'Peraia', 'Porto', 'Reykjavík', 'Rhodes', 'Rome', 'Saint-Tropez', 'San Marino', 'Sarande', 'Skopje', 'Split', 'Stockholm', 'Tbilisi', 'The Vatican', 'Thessaloniki', 'Utrecht', 'Valencia', 'Venice', 'Vienna', 'Warsaw', 'Zakynthos'],
   'North America': ['Baltimore', 'Buffalo', 'Cancun', 'Charlotte', 'Chicago', 'Chincoteague', 'Cincinnati', 'Costa Rica', 'Grand Canyon', 'Holbox', 'Houston', 'Kansas City', 'Lake Tahoe', 'Las Vegas', 'Los Angeles', 'Mexico City', 'Miami', 'New York City', 'Oakland', 'Oaxaca', 'Pensacola', 'Playa del Carmen', 'San Francisco', 'Toronto', 'Tulum', 'Vancouver', 'Washington DC'],
   'South America': ['Buenos Aires', 'Medellin', 'Paramaribo', 'Rio de Janeiro', 'Santiago', 'São Paulo'],
@@ -562,7 +562,7 @@ const REGIONS = {{
   'Africa & Islands': ['Cape Town', 'Maldives', 'Marrakech', 'Monrovia', 'Praia', 'Príncipe', 'Seychelles', 'São Tomé'],
   'Oceania': ['Broome', 'Melbourne', 'Perth', 'Sydney'],
   'Middle East': ['Doha', 'Muscat']
-}};
+};
 const CHEVRON=`<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 function toggleSection(id){
   const body=document.getElementById(id);
