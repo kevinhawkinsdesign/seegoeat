@@ -549,15 +549,16 @@ const COORDS={
 'Warsaw':[52.2297,21.0122],'Washington DC':[38.9072,-77.0369],'Zakynthos':[37.7907,20.9042],
 'Èze':[43.7285,7.3614],'Lake Tahoe':[39.0968,-120.0324],'Las Vegas':[36.1699,-115.1398],'Oakland':[37.8044,-122.2712],'Páros':[37.0853,25.1489],'Palma':[39.5696,2.6502]
 ,'Providenciales':[21.7941,-72.2217],'Aruba':[12.5092,-69.9803],'Willemstad':[12.1224,-68.8824],'Bonaire':[12.1784,-68.2385],'Paramaribo':[5.852,-55.2038],'Kingston':[18.0179,-76.8099],'Bahamas':[25.048,-77.3554],'Havana':[23.1136,-82.3666],'Santo Domingo':[18.4861,-69.9312],'San Juan':[18.4655,-66.1057],'Basseterre':[17.2948,-62.7261],'Charlotte':[35.2271,-80.8431],'Cincinnati':[39.1031,-84.512]};
-const REGIONS = {
+const REGIONS = {{
   'Europe': ['Akureyri', 'Algarve', 'Amsterdam', 'Antalya', 'Antibes', 'Athens', 'Barcelona', 'Palma', 'Bari', 'Berlin', 'Bilbao', 'Bologna', 'Bordeaux', 'Brescia', 'Bucharest', 'Budapest', 'Cannes', 'Cap Ferret', 'Cascais', 'Catania', 'Cologne', 'Comporta', 'Copenhagen', 'Corfu', 'Crete', 'Dalyan', 'Dublin', 'Edinburgh', 'Eindhoven', 'Èze', 'Florence', 'Freiburg', 'Gran Canaria', 'Hamburg', 'Helsingborg', 'Ibiza', 'Istanbul', 'Keflavík', 'Koufonisia', 'Lisbon', 'London', 'Madeira', 'Madrid', 'Mallorca', 'Malmö', 'Marbella/Málaga', 'Marmaris', 'Menorca', 'Meteora', 'Milan', 'Monaco', 'Munich', 'Naples', 'Nea Moudania', 'Nice', 'Oslo', 'Palermo', 'Paris', 'Paros', 'Páros', 'Peloponnese', 'Peraia', 'Porto', 'Reykjavík', 'Rhodes', 'Rome', 'Saint-Tropez', 'San Marino', 'Sarande', 'Skopje', 'Split', 'Stockholm', 'Tbilisi', 'The Vatican', 'Thessaloniki', 'Utrecht', 'Valencia', 'Venice', 'Vienna', 'Warsaw', 'Zakynthos'],
-  'North America': ['Baltimore', 'Buffalo', 'Chicago', 'Chincoteague', 'Grand Canyon', 'Houston', 'Lake Tahoe', 'Las Vegas', 'Oakland', 'Kansas City', 'Los Angeles', 'Miami', 'New York City', 'Pensacola', 'San Francisco', 'Toronto', 'Vancouver', 'Washington DC', 'Charlotte', 'Cincinnati'],
-  'Latin America': ['Buenos Aires', 'Cancun', 'Costa Rica', 'Holbox', 'Medellin', 'Mexico City', 'Oaxaca', 'Playa del Carmen', 'Rio de Janeiro', 'Santiago', 'São Paulo', 'Tulum', 'Aruba', 'Bahamas', 'Bonaire', 'Havana', 'Willemstad', 'Santo Domingo', 'Kingston', 'San Juan', 'Basseterre', 'Paramaribo', 'Providenciales'],
+  'North America': ['Baltimore', 'Buffalo', 'Cancun', 'Charlotte', 'Chicago', 'Chincoteague', 'Cincinnati', 'Costa Rica', 'Grand Canyon', 'Holbox', 'Houston', 'Kansas City', 'Lake Tahoe', 'Las Vegas', 'Los Angeles', 'Mexico City', 'Miami', 'New York City', 'Oakland', 'Oaxaca', 'Pensacola', 'Playa del Carmen', 'San Francisco', 'Toronto', 'Tulum', 'Vancouver', 'Washington DC'],
+  'South America': ['Buenos Aires', 'Medellin', 'Paramaribo', 'Rio de Janeiro', 'Santiago', 'São Paulo'],
+  'The Caribbeans': ['Aruba', 'Bahamas', 'Basseterre', 'Bonaire', 'Havana', 'Kingston', 'Providenciales', 'San Juan', 'Santo Domingo', 'Willemstad'],
   'Asia': ['Boracay', 'Kobe', 'Kyoto', 'Manila', 'Osaka', 'Palawan', 'Seoul', 'Tokyo'],
   'Africa & Islands': ['Cape Town', 'Maldives', 'Monrovia', 'Praia', 'Príncipe', 'Seychelles', 'São Tomé'],
   'Oceania': ['Broome', 'Melbourne', 'Perth', 'Sydney'],
   'Middle East': ['Doha', 'Muscat']
-};
+}};
 const CHEVRON=`<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 function toggleSection(id){
   const body=document.getElementById(id);
