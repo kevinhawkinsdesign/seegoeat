@@ -492,7 +492,7 @@ function loadCityHero(c,m){
     .catch(()=>{ _imgCache[title]=''; });
 }
 
-function goAbout(){
+function goAbout(noPush){
   document.getElementById('pg-home').classList.remove('on');
   document.getElementById('pg-city').classList.remove('on');
   document.getElementById('pg-about').classList.add('on');
@@ -503,7 +503,7 @@ function goAbout(){
   document.getElementById('navAboutBtn').classList.remove('on');
   document.getElementById('navAboutBtn').classList.add('on');
   buildNav(null);
-  history.pushState({},'',location.pathname+'#about');
+  if(!noPush) _pushHash('about');
   window.scrollTo(0,0);
 }
 function goHome(noPush){
@@ -613,7 +613,7 @@ function renderPlaces(k){
   const featSet=new Set(featured.map(p=>p.n));
 
   const featHTML=featured.length?`<div class="pfeat">${featured.map(p=>`
-    <div class="pf-card" onclick='openM(${JSON.stringify(p).replace(/'/g,"&#39;")},"${city.replace(/"/g,'&quot;')}"})'> 
+    <div class="pf-card" onclick='openM(${JSON.stringify(p).replace(/'/g,"&#39;")},"${city.replace(/"/g,'&quot;')}")'>
       <div class="pf-img" data-pname="${p.n.replace(/"/g,'&quot;')}"><div class="pf-ph">${p.n[0]}</div></div>
       <div class="pf-body">
         <span class="pf-cat">${p.c}${p.r?' · '+p.r+'★':''}</span>
@@ -625,7 +625,7 @@ function renderPlaces(k){
   const listHTML=`<div class="pllist">${places.map(p=>{
     const pill=p.c+(p.r?` · ${p.r}★`:'');
     const fav=(p.f&&k!=='My Favorites')?'<span class="fave-badge-inline">♥</span>':'';
-    return `<div class="pli" onclick='openM(${JSON.stringify(p).replace(/'/g,"&#39;")},"${city.replace(/"/g,'&quot;')}"})'> 
+    return `<div class="pli" onclick='openM(${JSON.stringify(p).replace(/'/g,"&#39;")},"${city.replace(/"/g,'&quot;')}")'>
       <div class="pli-img" data-pname="${p.n.replace(/"/g,'&quot;')}"><div class="pli-ph">${p.c[0]}</div></div>
       <div class="pli-body">
         <div class="pli-meta"><span class="ppill">${pill}</span>${fav}</div>
@@ -1026,7 +1026,8 @@ window.addEventListener('load',function(){
 });
 
 </script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
 window.addEventListener('load',function(){
   if(typeof L==='undefined') return;
   const hmap=L.map('homeMap',{center:[20,10],zoom:2,minZoom:2,zoomControl:false,attributionControl:false,scrollWheelZoom:false,dragging:!L.Browser.mobile,tap:false});
