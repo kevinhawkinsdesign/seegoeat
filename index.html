@@ -43,7 +43,7 @@ body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;f
 .about-link{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--rule);font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-light);text-decoration:none;transition:color .15s;}
 .about-link:hover{color:var(--accent);}
 .about-link::after{content:"↗";opacity:.5;}
-.mast{position:relative;min-height:92vh;display:flex;align-items:flex-end;padding:0;border-bottom:1px solid var(--rule);overflow:hidden;background:#000;}.mast-bg{position:absolute;inset:0;background-image:url(https://www.kevinthecreator.com/wp-content/uploads/2022/02/IMG_2202.jpg);background-size:cover;background-position:center top;opacity:.55;}.mast-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.92) 0%,rgba(0,0,0,.3) 60%,rgba(0,0,0,.1) 100%);}.mast-content{position:relative;z-index:1;padding:52px 48px 64px;}
+.mast{position:relative;min-height:92vh;display:flex;align-items:flex-end;padding:0;border-bottom:1px solid var(--rule);overflow:hidden;background:#000;}.mast-bg{position:absolute;inset:0;background-image:url(https://www.kevinthecreator.com/wp-content/uploads/2022/02/IMG_2202.jpg);background-size:cover;background-position:right center;opacity:.55;}.mast-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.92) 0%,rgba(0,0,0,.3) 60%,rgba(0,0,0,.1) 100%);}.mast-content{position:relative;z-index:1;padding:52px 48px 64px;}
 .kicker{font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;display:flex;align-items:center;gap:12px;text-shadow:0 2px 12px rgba(0,0,0,.8);}
 .kicker::after{content:'';display:block;height:1px;width:44px;background:var(--accent);}
 .mast h1{font-family:'Playfair Display',serif;font-size:66px;line-height:1.06;font-weight:700;letter-spacing:-0.03em;margin-bottom:22px;}
@@ -137,13 +137,12 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
   .top-nav{padding:0 20px;height:56px;}
   .nav-home{height:56px;font-size:12px;padding:0 10px;}
   .nav-home::after{left:10px;right:10px;}
-  .city-select-wrap select{min-width:0;max-width:150px;font-size:12px;}
   .vprops{grid-template-columns:1fr;}
   .vprop{border-right:none;border-bottom:1px solid var(--rule);}
   .vprop:last-child{border-bottom:none;}
   .vprop-title{font-size:20px;}
   .vprop{padding:28px 24px;}
-  .city-select-wrap select{min-width:0;max-width:none;width:100%;}
+  .city-select-wrap select{min-width:0;max-width:180px;font-size:12px;}
   .city-select-wrap{flex:1;}
   .mast h1{font-size:40px;}
   .mast,.chero,.psec,.about,.shd{padding-left:24px;padding-right:24px;}
@@ -166,12 +165,14 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
   .sn{font-size:30px;}
 }
 @media(max-width:560px){
-  .top-nav{padding:0 16px;height:52px;}
-  .nav-home{height:52px;padding:0 8px;font-size:12px;}
-  .nav-home::after{left:8px;right:8px;}
+  .top-nav{padding:0 14px;height:52px;gap:8px;}
+  .nav-home{display:none;}
   .logo img{height:20px;}
-  .map-btn{padding:0 12px;height:30px;font-size:10px;}
-  .city-select-wrap select{max-width:130px;border-radius:20px;min-width:0;padding:7px 12px;}
+  .logo{margin-right:0;}
+  .nav-right{gap:8px;}
+  .city-select-wrap{flex:1;}
+  .city-select-wrap select{max-width:none;width:100%;min-width:0;border-radius:6px;padding:6px 28px 6px 10px;font-size:12px;height:34px;}
+  .map-btn{padding:0 12px;height:34px;font-size:10px;letter-spacing:0.04em;}
   .about-pg{padding:44px 20px 72px;}
   .about-pg h1{font-size:36px;}
   .about-pg .about-lead{font-size:17px;}
