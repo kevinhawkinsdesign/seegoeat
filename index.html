@@ -248,6 +248,11 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
 
 .map-btn{font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:0 16px;height:34px;display:inline-flex;align-items:center;cursor:pointer;color:#0f0e0c;background:var(--accent);border-radius:6px;transition:opacity .2s;white-space:nowrap;flex-shrink:0;}
 .map-btn:hover{opacity:.85;transform:translateY(-1px);}.map-btn.on{opacity:.7;}
+.leaflet-popup-content-wrapper{background:#1a1815;border:1px solid #252220;border-radius:4px;box-shadow:0 4px 24px rgba(0,0,0,.6);color:#ede8e0;}
+.leaflet-popup-tip{background:#1a1815;}
+.leaflet-popup-content{margin:14px 16px;font-family:'DM Sans',sans-serif;}
+.sge-pin-btn{background:#f06030;color:#0f0e0c;border:none;padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;width:100%;margin-top:8px;}
+.sge-pin-btn:hover{opacity:.85;}
 </style>
 </head>
 <body>
@@ -769,8 +774,7 @@ function expandCollapseAll(){
   document.getElementById('stReviewed').textContent=reviewed;
   document.getElementById('stCitiesHero').textContent=cityCount+'+';
   const initRaw=decodeURIComponent(location.hash.slice(1));
-
-  else{
+  {
     const initParts=initRaw.split('/');
     const initCity=initParts[0]?cityFromSlug(initParts[0]):null;
     if(initCity){
@@ -902,3 +906,37 @@ function goHomeMap(){
     setTimeout(function(){document.getElementById('homeMapWrap').scrollIntoView({behavior:'smooth'});},150);
   }
 }>
+</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+window.addEventListener('load',function(){
+  if(typeof L==='undefined') return;
+  const hmap=L.map('homeMap',{center:[20,10],zoom:2,minZoom:2,zoomControl:false,attributionControl:false,scrollWheelZoom:false,dragging:!L.Browser.mobile,tap:false});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:18}).addTo(hmap);
+  const cityRegion={};
+  for(const [r,cities] of Object.entries(REGIONS)) cities.forEach(c=>cityRegion[c]=r);
+  const RC={'Europe':'#f06030','North America':'#4a7fe8','Latin America':'#3dc94a','Asia':'#e8b020','Africa & Islands':'#c040e8','Oceania':'#20c8d4','Middle East':'#e84040'};
+  for(const [city,ll] of Object.entries(COORDS)){
+    if(!PLACES[city]) continue;
+    const col=RC[cityRegion[city]]||'#9c9488';
+    const pl=PLACES[city]||[],fv=pl.filter(p=>p.f).length,mt=META[city]||{};
+    L.marker(ll,{icon:L.divIcon({
+      className:'',
+      html:`<div style="width:9px;height:9px;border-radius:50%;background:${col};border:1.5px solid rgba(255,255,255,.6);box-shadow:0 1px 4px rgba(0,0,0,.5);cursor:pointer"></div>`,
+      iconSize:[9,9],iconAnchor:[4,4],popupAnchor:[0,-6]
+    })}).addTo(hmap).bindPopup(`<div style="font-family:'DM Sans',sans-serif;min-width:140px">
+      <div style="font-size:20px;margin-bottom:3px">${mt.emoji||'📍'}</div>
+      <div style="font-weight:700;font-size:14px;margin-bottom:2px">${city}</div>
+      <div style="font-size:10px;color:#9c9488;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">${mt.country||''}</div>
+      <div style="font-size:11px;margin-bottom:8px;color:#9c9488">${pl.length} places · ${fv} faves</div>
+      <button class="sge-pin-btn" onclick="goCity('${city.replace(/'/g,"\'")}')">Explore →</button>
+    </div>`,{maxWidth:200});
+  }
+  document.getElementById('homeMapWrap').addEventListener('click',function(){
+    hmap.scrollWheelZoom.enable();
+    hmap.dragging.enable();
+  });
+});
+</script>
+</body>
+</html>
