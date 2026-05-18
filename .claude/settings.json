@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git push*)",
+            "timeout": 20,
+            "statusMessage": "Checking seegoeat.com...",
+            "command": "CMD=$(jq -r '.tool_input.command'); if echo \"$CMD\" | grep -qE '^git push'; then STATUS=$(curl -s -o /dev/null -w \"%{http_code}\" --max-time 10 -L -A \"Mozilla/5.0\" https://seegoeat.com); BODY=$(curl -s --max-time 10 -L -A \"Mozilla/5.0\" https://seegoeat.com); if [ \"$STATUS\" = \"200\" ] && echo \"$BODY\" | grep -qi \"SeeGoEat\"; then echo \"{\\\"systemMessage\\\": \\\"✓ seegoeat.com is live (HTTP $STATUS)\\\"\"}\" ; else echo \"{\\\"systemMessage\\\": \\\"⚠ seegoeat.com check: HTTP $STATUS — verify the site manually\\\"}\"}\" ; fi; fi"
+          }
+        ]
+      }
+    ]
+  }
+}
