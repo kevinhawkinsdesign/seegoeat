@@ -1,5 +1,17 @@
 {
   "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/user/seegoeat/.claude/predeploy-check.sh",
+            "timeout": 30,
+            "statusMessage": "Running pre-deploy checks..."
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Bash",
