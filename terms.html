@@ -12,11 +12,14 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.7;min-height:100vh;}
-.top-nav{border-bottom:2px solid var(--ink);background:var(--paper);position:sticky;top:0;z-index:100;display:flex;align-items:stretch;min-height:52px;}
-.logo{padding:8px 20px;border-right:1px solid var(--rule);cursor:pointer;display:flex;align-items:center;}
-.logo img{height:32px;width:auto;display:block;}
-.back-link{font-size:11px;letter-spacing:0.11em;text-transform:uppercase;padding:0 20px;height:100%;display:flex;align-items:center;color:var(--ink-muted);text-decoration:none;transition:color .15s;}
-.back-link:hover{color:var(--ink);}
+nav{border-bottom:1px solid rgba(255,255,255,.06);background:rgba(15,14,12,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);position:sticky;top:0;z-index:100;display:flex;align-items:center;height:56px;padding:0 32px;gap:0;flex-wrap:nowrap;}
+.logo{display:flex;align-items:center;cursor:pointer;margin-right:28px;flex-shrink:0;}
+.logo img{height:22px;width:auto;display:block;}
+.nav-link{font-size:13px;font-weight:400;color:var(--ink-muted);text-decoration:none;padding:0 14px;height:56px;display:inline-flex;align-items:center;transition:color .15s;white-space:nowrap;flex-shrink:0;}
+.nav-link:hover{color:var(--ink);}
+.nav-spacer{flex:1;}
+.map-btn{font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:0 16px;height:34px;display:inline-flex;align-items:center;cursor:pointer;color:#0f0e0c;background:var(--accent);border-radius:6px;transition:opacity .2s;white-space:nowrap;flex-shrink:0;text-decoration:none;}
+.map-btn:hover{opacity:.85;}
 .page-wrap{max-width:720px;margin:0 auto;padding:72px 48px 96px;}
 .kicker{font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;display:flex;align-items:center;gap:12px;}
 .kicker::after{content:'';display:block;height:1px;width:44px;background:var(--accent);}
@@ -40,9 +43,12 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
 </head>
 <body>
 
-<nav class="top-nav">
+<nav>
   <a class="logo" href="/"><img src="logo.png" alt="SeeGoEat"></a>
-  <a class="back-link" href="/">← Back to SeeGoEat</a>
+  <a class="nav-link" href="/">Home</a>
+  <a class="nav-link" href="/about">About</a>
+  <div class="nav-spacer"></div>
+  <a class="map-btn" href="/#homeMapWrap">↗ Map</a>
 </nav>
 
 <div class="page-wrap">
