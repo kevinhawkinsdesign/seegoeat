@@ -99,8 +99,8 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
   <p>Both Booking.com and Kayak independently place me in the top 1% of travellers worldwide. I'm not sure whether that's an achievement or a mild cause for concern, but it does mean the data behind SeeGoEat is unusual in its depth. Every city here has been walked, eaten, and slept in, repeatedly.</p>
   <p>Nothing on this site is sponsored, algorithmically generated, or incentivised. If I saved something, it earned it, usually after several visits and at least one very good meal.</p>
   <div class="about-stats">
-    <div class="about-stat"><span class="about-stat-n">74+</span><span class="about-stat-l">Countries visited</span></div>
-    <div class="about-stat"><span class="about-stat-n">147</span><span class="about-stat-l">Cities covered</span></div>
+    <div class="about-stat"><span class="about-stat-n" id="aboutCountries">74+</span><span class="about-stat-l">Countries visited</span></div>
+    <div class="about-stat"><span class="about-stat-n" id="aboutCities">—</span><span class="about-stat-l">Cities covered</span></div>
     <div class="about-stat"><span class="about-stat-n">3</span><span class="about-stat-l">Decades travelling</span></div>
   </div>
   <nav class="about-links">
@@ -117,5 +117,18 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
   <span><a href="/privacy.html" style="color:var(--ink-muted);text-decoration:none;margin-right:16px">Privacy</a><a href="/terms.html" style="color:var(--ink-muted);text-decoration:none">Terms</a></span>
 </footer>
 
+<script src="data.js"></script>
+<script>
+(function(){
+  if(typeof PLACES==="undefined"||typeof META==="undefined") return;
+  var cities=Object.keys(PLACES).length;
+  var countries=new Set();
+  for(var c in PLACES){var ctry=(META[c]||{}).country;if(ctry)countries.add(ctry);}
+  var cEl=document.getElementById("aboutCities");
+  if(cEl) cEl.textContent=cities;
+  var nEl=document.getElementById("aboutCountries");
+  if(nEl) nEl.textContent=Math.max(74,countries.size)+"+";
+})();
+</script>
 </body>
 </html>
