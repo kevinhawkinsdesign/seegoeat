@@ -68,56 +68,91 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
 <div class="page-wrap">
   <div class="kicker">Privacy</div>
   <h1>Your privacy, <em>respected.</em></h1>
-  <p class="updated">Last updated: May 2026</p>
+  <p class="updated">Last updated: June 2026</p>
 
   <div class="section">
-    <h2>What this site is</h2>
-    <p>SeeGoEat is a personal travel guide curated by Kevin Hawkins. It is a static website — there is no backend, no database, and no user accounts. No personal information is required to browse the site.</p>
+    <h2>What SeeGoEat is</h2>
+    <p>SeeGoEat is a personal travel guide curated by Kevin Hawkins. It comes in two forms:</p>
+    <ul>
+      <li>This <strong>static website</strong> — no backend, no accounts, browse freely.</li>
+      <li>The <strong>SeeGoEat mobile app</strong> (iOS &amp; Android) — adds optional sign-in so you can log visits, write personal notes, and rate places.</li>
+    </ul>
+    <p>Sign-in is optional. You can browse the full catalog of cities and places without an account.</p>
   </div>
 
   <div class="divider"></div>
 
   <div class="section">
-    <h2>Data we collect</h2>
-    <p>We collect no personal data from visitors. Specifically:</p>
+    <h2>Data the website collects</h2>
+    <p>The website collects no personal data:</p>
     <ul>
       <li>No sign-up, login, or account is required.</li>
-      <li>No cookies are set by this site.</li>
-      <li>No analytics scripts (e.g. Google Analytics) are loaded.</li>
-      <li>There is no contact form or submission mechanism on this site.</li>
+      <li>No cookies are set.</li>
+      <li>There is no contact form or submission mechanism.</li>
     </ul>
   </div>
 
   <div class="divider"></div>
 
   <div class="section">
-    <h2>AI Search</h2>
-    <p>The "✦ Ask AI" search feature sends your typed query to the <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic API</a> to generate recommendations. When you use AI search:</p>
+    <h2>Data the mobile app collects</h2>
+    <p>The app collects the minimum necessary to power its features:</p>
     <ul>
-      <li>Your search query and the site's place index are sent to Anthropic's servers to generate results.</li>
-      <li>Anthropic may log API requests per their own <a href="https://www.anthropic.com/privacy" target="_blank" rel="noopener">privacy policy</a>.</li>
-      <li>No query history is stored by SeeGoEat itself.</li>
+      <li><strong>Email address</strong> — only if you sign in. Used as your account identifier and to send a one-time sign-in code. We do not send marketing email.</li>
+      <li><strong>Apple ID identifier</strong> — only if you choose "Sign in with Apple". Apple may share a relay email which we use the same way as a regular email.</li>
+      <li><strong>Your visits, notes, and ratings</strong> — saved to your account so you can sync across devices. Only you can see, edit, share, or delete them.</li>
+      <li><strong>Bookmarks</strong> — by default stored locally on your device only.</li>
+      <li><strong>Anonymous usage analytics</strong> — see "Analytics" below.</li>
     </ul>
-    <p>If you do not wish to use this feature, simply use the standard text search instead — it runs entirely in your browser with no external requests.</p>
+    <p>You can delete your account and all associated data at any time from the Profile tab.</p>
   </div>
 
   <div class="divider"></div>
 
   <div class="section">
-    <h2>Third-party services</h2>
-    <p>This site loads the following third-party resources:</p>
+    <h2>Analytics</h2>
+    <p>The mobile app uses <a href="https://posthog.com" target="_blank" rel="noopener">PostHog</a> to understand which screens and features are used, and to diagnose crashes. PostHog receives:</p>
     <ul>
-      <li><strong>Google Fonts</strong> — typefaces (Playfair Display, DM Sans) are loaded from Google's CDN. Google may log font requests per their <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">privacy policy</a>.</li>
-      <li><strong>Anthropic API</strong> — used only when you click "✦ Ask AI", as described above.</li>
+      <li>A randomly-generated anonymous device identifier (not tied to your name).</li>
+      <li>App version, OS, device model, and approximate region inferred from IP.</li>
+      <li>Screen views and high-level event names (e.g. "place opened", "visit logged"). The contents of your notes are never sent.</li>
     </ul>
-    <p>No advertising networks, tracking pixels, or social media embeds are used.</p>
+    <p>PostHog's privacy policy: <a href="https://posthog.com/privacy" target="_blank" rel="noopener">posthog.com/privacy</a>. No advertising networks, tracking pixels, or social-media SDKs are used.</p>
   </div>
 
   <div class="divider"></div>
 
   <div class="section">
-    <h2>Local storage</h2>
-    <p>This site may use your browser's <code>localStorage</code> to remember your last-viewed city or UI preferences. No personally identifiable information is stored there. You can clear it at any time via your browser settings.</p>
+    <h2>Where data is stored</h2>
+    <p>Account data (email, visits, notes, ratings) is stored with <a href="https://supabase.com" target="_blank" rel="noopener">Supabase</a>, which provides our authentication and database. Row-level security ensures only you can access your own data. Supabase's privacy policy: <a href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a>.</p>
+    <p>City photos are fetched from the public <a href="https://www.wikipedia.org" target="_blank" rel="noopener">Wikipedia</a> REST API.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <h2>AI Search (website only)</h2>
+    <p>The "✦ Ask AI" feature on this website sends your query to the <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic API</a>. No query history is stored by SeeGoEat. The mobile app does not use AI search.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <h2>Your rights</h2>
+    <p>You can at any time:</p>
+    <ul>
+      <li>Sign out and continue browsing anonymously.</li>
+      <li>Delete any individual visit, note, or rating from the place screen.</li>
+      <li>Delete your entire account and all stored data from the Profile tab (irreversible).</li>
+      <li>Disable analytics on the device level via your OS privacy settings.</li>
+    </ul>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <h2>Children</h2>
+    <p>SeeGoEat is not directed at children under 13. We do not knowingly collect data from children.</p>
   </div>
 
   <div class="divider"></div>
