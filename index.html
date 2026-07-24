@@ -431,6 +431,21 @@ let REGIONS = {};
 
 const REGION_ORDER = ['Europe','North America','South America','The Caribbeans','Asia','Africa & Islands','Oceania','Middle East'];
 
+// Coordinates the homepage Leaflet map: it must wait for both the Leaflet
+// library (window 'load') and the async Supabase fetch, whichever finishes last.
+let leafletReady = false;
+let sgeDataReady = false;
+const homeMapCallbacks = [];
+function onceMapAndDataReady(fn) {
+  if (leafletReady && sgeDataReady) fn();
+  else homeMapCallbacks.push(fn);
+}
+function markReady(which) {
+  if (which === 'leaflet') leafletReady = true;
+  if (which === 'data') sgeDataReady = true;
+  if (leafletReady && sgeDataReady) homeMapCallbacks.splice(0).forEach((fn) => fn());
+}
+
 async function loadFromSupabase() {
   const supa = supabase.createClient(SUPA_URL, SUPA_KEY);
 
@@ -548,16 +563,6 @@ const COORDS={
 'Warsaw':[52.2297,21.0122],'Washington DC':[38.9072,-77.0369],'Zakynthos':[37.7907,20.9042],
 'Èze':[43.7285,7.3614],'Lake Tahoe':[39.0968,-120.0324],'Las Vegas':[36.1699,-115.1398],'Oakland':[37.8044,-122.2712],'Páros':[37.0853,25.1489],'Palma':[39.5696,2.6502]
 ,'Providenciales':[21.7941,-72.2217],'Aruba':[12.5092,-69.9803],'Willemstad':[12.1224,-68.8824],'Bonaire':[12.1784,-68.2385],'Paramaribo':[5.852,-55.2038],'Kingston':[18.0179,-76.8099],'Bahamas':[25.048,-77.3554],'Havana':[23.1136,-82.3666],'Santo Domingo':[18.4861,-69.9312],'San Juan':[18.4655,-66.1057],'Basseterre':[17.2948,-62.7261],'Charlotte':[35.2271,-80.8431],'Cincinnati':[39.1031,-84.512]};
-const REGIONS = {
-  'Europe': ['Akureyri', 'Algarve', 'Amsterdam', 'Antalya', 'Antibes', 'Athens', 'Barcelona', 'Palma', 'Bari', 'Berlin', 'Bilbao', 'Bologna', 'Bordeaux', 'Brescia', 'Bucharest', 'Budapest', 'Cannes', 'Cap Ferret', 'Cascais', 'Catania', 'Cologne', 'Comporta', 'Copenhagen', 'Corfu', 'Crete', 'Dalyan', 'Dublin', 'Edinburgh', 'Eindhoven', 'Èze', 'Florence', 'Freiburg', 'Gran Canaria', 'Hamburg', 'Helsingborg', 'Ibiza', 'Istanbul', 'Keflavík', 'Koufonisia', 'Lisbon', 'London', 'Madeira', 'Madrid', 'Mallorca', 'Malmö', 'Marbella/Málaga', 'Marmaris', 'Menorca', 'Meteora', 'Milan', 'Monaco', 'Munich', 'Naples', 'Nea Moudania', 'Nice', 'Oslo', 'Palermo', 'Paris', 'Paros', 'Páros', 'Peloponnese', 'Peraia', 'Porto', 'Reykjavík', 'Rhodes', 'Rome', 'Saint-Tropez', 'San Marino', 'Sarande', 'Skopje', 'Split', 'Stockholm', 'Tbilisi', 'The Vatican', 'Thessaloniki', 'Utrecht', 'Valencia', 'Venice', 'Vienna', 'Warsaw', 'Zakynthos'],
-  'North America': ['Baltimore', 'Buffalo', 'Cancun', 'Charlotte', 'Chicago', 'Chincoteague', 'Cincinnati', 'Costa Rica', 'Grand Canyon', 'Holbox', 'Houston', 'Kansas City', 'Lake Tahoe', 'Las Vegas', 'Los Angeles', 'Mexico City', 'Miami', 'New Orleans', 'New York City', 'Oakland', 'Oaxaca', 'Pensacola', 'Playa del Carmen', 'San Francisco', 'Toronto', 'Tulum', 'Vancouver', 'Washington DC'],
-  'South America': ['Buenos Aires', 'Medellin', 'Paramaribo', 'Rio de Janeiro', 'Santiago', 'São Paulo'],
-  'The Caribbeans': ['Aruba', 'Bahamas', 'Basseterre', 'Bonaire', 'Havana', 'Kingston', 'Providenciales', 'San Juan', 'Santo Domingo', 'Willemstad'],
-  'Asia': ['Boracay', 'Kobe', 'Kyoto', 'Manila', 'Osaka', 'Palawan', 'Seoul', 'Tokyo'],
-  'Africa & Islands': ['Cape Town', 'Kigali', 'Maldives', 'Marrakech', 'Monrovia', 'Nairobi', 'Praia', 'Príncipe', 'Seychelles', 'São Tomé'],
-  'Oceania': ['Broome', 'Melbourne', 'Perth', 'Sydney'],
-  'Middle East': ['Doha', 'Muscat']
-};
 const CHEVRON=`<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 function toggleSection(id){
   const body=document.getElementById(id);
@@ -659,6 +664,7 @@ async function main() {
     console.error('SeeGoEat: Supabase load failed:', e);
   }
   init();
+  markReady('data');
 }
 main();
 window.addEventListener('popstate',function(){
@@ -733,42 +739,22 @@ function showSearchResults(results, headerText){
     '</div>';
 }
 
-const SGEKEY=['sk-ant-api03-iNQ_Zng','OszHyJ-quiYOtAOEU1r','OgWkcDE_4q1D-RfebLM','VWJTbQOnUkyS_zkDH7D','459y_Zbv4HR7edn9vVQ','x-w-ypkwIQAA'].join('');
 async function aiSearch(){
   const q=(document.getElementById('aiSearchInput').value||'').trim();
   if(!q) return;
   const out=document.getElementById('aiSearchResults');
   const btn=document.querySelector('.ai-search-btn');
-  btn.disabled=true;btn.textContent='Thinking...';
-  out.innerHTML='<div class="ai-result-header">AI is searching your places...</div>';
+  btn.disabled=true;btn.textContent='Searching...';
+  out.innerHTML='<div class="ai-result-header">Searching your places...</div>';
   try{
-    const idx=[];
-    for(const [city,places] of Object.entries(PLACES)){
-      for(const p of places) idx.push(`${p.n}|||${city}|||${p.c}|||${(p.d||'').slice(0,60)}`);
-    }
-    const prompt=`You are a travel recommendation assistant. Given this query: "${q}"
-
-Search through these places and return the top 12 most relevant ones. Reply ONLY with a JSON array of objects with keys "n" (name) and "city" (city name), nothing else.
-
-Places (format: name|||city|||category|||description_snippet):
-${idx.join('\n')}`;
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'x-api-key':SGEKEY,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1024,messages:[{role:'user',content:prompt}]})
-    });
-    if(!res.ok){
-      const err=await res.json();
-      throw new Error(err.error?.message||res.statusText);
-    }
-    const data=await res.json();
-    const text=data.content[0].text.trim();
-    const matches=JSON.parse(text.match(/\[.*\]/s)[0]);
-    const results=matches.map(({n,city})=>{
-      const place=(PLACES[city]||[]).find(p=>p.n===n);
-      return place?{p:place,city}:null;
-    }).filter(Boolean);
-    showSearchResults(results, `AI found ${results.length} places for "${q}"`);
+    const supa=supabase.createClient(SUPA_URL,SUPA_KEY);
+    const {data,error}=await supa.functions.invoke('search-places',{body:{query:q,limit:12}});
+    if(error) throw error;
+    const results=(data?.results||[]).map(r=>({
+      p:{n:r.name,c:r.category,d:r.description,u:r.google_maps_url,r:r.rating,f:r.is_favorite},
+      city:r.city_name,
+    }));
+    showSearchResults(results, `${results.length} places found for "${q}"`);
   }catch(e){
     out.innerHTML=`<div class="ai-result-header" style="color:red">Error: ${e.message}</div>`;
   }
@@ -789,6 +775,9 @@ function goHomeMap(){
 <script>
 window.addEventListener('load',function(){
   if(typeof L==='undefined') return;
+  markReady('leaflet');
+});
+onceMapAndDataReady(function(){
   const hmap=L.map('homeMap',{center:[20,10],zoom:2,minZoom:2,zoomControl:false,attributionControl:false,scrollWheelZoom:false,dragging:!L.Browser.mobile,tap:false});
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:18}).addTo(hmap);
   const cityRegion={};
