@@ -254,6 +254,10 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
 .leaflet-popup-content{margin:14px 16px;font-family:'DM Sans',sans-serif;}
 .sge-pin-btn{background:#f06030;color:#0f0e0c;border:none;padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;width:100%;margin-top:8px;}
 .sge-pin-btn:hover{opacity:.85;}
+.near-me-btn{position:absolute;top:14px;right:14px;z-index:400;display:inline-flex;align-items:center;gap:6px;background:var(--paper);color:var(--accent);border:1px solid var(--rule);border-radius:20px;padding:8px 16px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.02em;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.3);transition:opacity .15s;}
+.near-me-btn:hover{opacity:.85;}
+.near-me-btn:disabled{opacity:.6;cursor:default;}
+.near-me-btn.on{background:var(--accent);color:var(--paper);border-color:var(--accent);}
 </style>
 </head>
 <body>
@@ -309,6 +313,7 @@ footer strong{font-family:'Playfair Display',serif;font-size:15px;font-weight:70
   </div>
   <div id="homeMapWrap" style="height:380px;width:100%;border-bottom:1px solid var(--rule);position:relative;">
     <div id="homeMap" style="width:100%;height:100%"></div>
+    <button id="nearMeBtn" class="near-me-btn" onclick="event.stopPropagation();toggleNearMe();">📍 Near me</button>
   </div>
   <div class="shd"><div class="shr"></div><span class="shl">Choose a city</span><div class="shr"></div></div>
 
@@ -491,7 +496,7 @@ async function loadFromSupabase() {
   while (true) {
     const { data: batch, error: pErr } = await supa
       .from('places')
-      .select('city_id, name, category, description, google_maps_url, rating, is_favorite, business_status')
+      .select('city_id, name, category, description, google_maps_url, rating, is_favorite, business_status, lat, lng')
       .not('business_status', 'eq', 'CLOSED_PERMANENTLY')
       .range(from, from + batchSize - 1);
     if (pErr) throw pErr;
@@ -513,6 +518,8 @@ async function loadFromSupabase() {
       u: p.google_maps_url || '',
       r: p.rating  || null,
       f: p.is_favorite === true,
+      lat: p.lat ?? null,
+      lng: p.lng ?? null,
     });
   }
 }
@@ -777,9 +784,81 @@ window.addEventListener('load',function(){
   if(typeof L==='undefined') return;
   markReady('leaflet');
 });
+let hmap=null, cityLayer=null, nearMeLayer=null, nearMeActive=false;
+const CATEGORY_COLORS={'Food':'#f06030','Drinks':'#4a7fe8','Places to Stay':'#3dc94a','Places to See':'#e8c84a','Nightlife':'#c84ae8'};
+
+function haversineKm(lat1,lng1,lat2,lng2){
+  const R=6371;
+  const dLat=(lat2-lat1)*Math.PI/180, dLng=(lng2-lng1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+function toggleNearMe(){
+  if(!hmap) return;
+  const btn=document.getElementById('nearMeBtn');
+  if(nearMeActive){
+    if(nearMeLayer){ hmap.removeLayer(nearMeLayer); nearMeLayer=null; }
+    cityLayer.addTo(hmap);
+    nearMeActive=false;
+    btn.textContent='📍 Near me';
+    btn.classList.remove('on');
+    return;
+  }
+  if(!navigator.geolocation){
+    alert('Geolocation is not supported by your browser.');
+    return;
+  }
+  btn.disabled=true;
+  btn.textContent='Locating…';
+  navigator.geolocation.getCurrentPosition(function(pos){
+    btn.disabled=false;
+    const {latitude,longitude}=pos.coords;
+    const RADIUS_KM=5;
+    const nearby=[];
+    for(const [city,places] of Object.entries(PLACES)){
+      for(const p of places){
+        if(p.lat==null||p.lng==null) continue;
+        const d=haversineKm(latitude,longitude,p.lat,p.lng);
+        if(d<=RADIUS_KM) nearby.push({p,city,d});
+      }
+    }
+    nearMeActive=true;
+    hmap.removeLayer(cityLayer);
+    nearMeLayer=L.layerGroup().addTo(hmap);
+    L.circle([latitude,longitude],{radius:RADIUS_KM*1000,color:'#f06030',weight:1,fillColor:'#f06030',fillOpacity:0.06}).addTo(nearMeLayer);
+    L.marker([latitude,longitude],{icon:L.divIcon({
+      className:'',
+      html:'<div style="width:12px;height:12px;border-radius:50%;background:#4a7fe8;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5)"></div>',
+      iconSize:[12,12],iconAnchor:[6,6]
+    })}).addTo(nearMeLayer);
+    for(const {p,city} of nearby){
+      const col=CATEGORY_COLORS[p.c]||'#f06030';
+      L.marker([p.lat,p.lng],{icon:L.divIcon({
+        className:'',
+        html:`<div style="width:9px;height:9px;border-radius:50%;background:${col};border:1.5px solid rgba(255,255,255,.6);box-shadow:0 1px 4px rgba(0,0,0,.5);cursor:pointer"></div>`,
+        iconSize:[9,9],iconAnchor:[4,4],popupAnchor:[0,-6]
+      })}).addTo(nearMeLayer).bindPopup(`<div style="font-family:'DM Sans',sans-serif;min-width:150px">
+        <div style="font-weight:700;font-size:14px;margin-bottom:2px">${p.n}</div>
+        <div style="font-size:10px;color:#9c9488;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">${p.c} · ${city}</div>
+        ${p.d?`<div style="font-size:11px;color:#9c9488;margin-bottom:8px">${p.d.slice(0,100)}</div>`:''}
+        <button class="sge-pin-btn" onclick="goCity('${city.replace(/'/g,"\'")}')">Explore →</button>
+      </div>`,{maxWidth:220});
+    }
+    hmap.setView([latitude,longitude],12);
+    btn.textContent=nearby.length+' nearby';
+    btn.classList.add('on');
+  }, function(err){
+    btn.disabled=false;
+    btn.textContent='📍 Near me';
+    alert('Could not get your location: '+(err.message||'permission denied'));
+  }, {enableHighAccuracy:false,timeout:10000,maximumAge:300000});
+}
+
 onceMapAndDataReady(function(){
-  const hmap=L.map('homeMap',{center:[20,10],zoom:2,minZoom:2,zoomControl:false,attributionControl:false,scrollWheelZoom:false,dragging:!L.Browser.mobile,tap:false});
+  hmap=L.map('homeMap',{center:[20,10],zoom:2,minZoom:2,zoomControl:false,attributionControl:false,scrollWheelZoom:false,dragging:!L.Browser.mobile,tap:false});
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:18}).addTo(hmap);
+  cityLayer=L.layerGroup().addTo(hmap);
   const cityRegion={};
   for(const [r,cities] of Object.entries(REGIONS)) cities.forEach(c=>cityRegion[c]=r);
   const RC={'Europe':'#f06030','North America':'#4a7fe8','Latin America':'#3dc94a','Asia':'#e8b020','Africa & Islands':'#c040e8','Oceania':'#20c8d4','Middle East':'#e84040'};
@@ -791,7 +870,7 @@ onceMapAndDataReady(function(){
       className:'',
       html:`<div style="width:9px;height:9px;border-radius:50%;background:${col};border:1.5px solid rgba(255,255,255,.6);box-shadow:0 1px 4px rgba(0,0,0,.5);cursor:pointer"></div>`,
       iconSize:[9,9],iconAnchor:[4,4],popupAnchor:[0,-6]
-    })}).addTo(hmap).bindPopup(`<div style="font-family:'DM Sans',sans-serif;min-width:140px">
+    })}).addTo(cityLayer).bindPopup(`<div style="font-family:'DM Sans',sans-serif;min-width:140px">
       <div style="font-size:20px;margin-bottom:3px">${mt.emoji||'📍'}</div>
       <div style="font-weight:700;font-size:14px;margin-bottom:2px">${city}</div>
       <div style="font-size:10px;color:#9c9488;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">${mt.country||''}</div>
